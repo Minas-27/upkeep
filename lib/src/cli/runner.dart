@@ -2,14 +2,22 @@ import 'dart:io';
 
 import 'package:pub_semver/pub_semver.dart';
 
+import '../fix/apply.dart';
+import '../fix/plan.dart';
 import '../project/android.dart';
 import '../project/lockfile.dart';
 import '../project/pubspec.dart';
+import '../project/references.dart';
 import '../pub/cache.dart';
 import '../pub/client.dart';
+import '../report/explain_report.dart';
+import '../report/fix_report.dart';
+import '../report/json_report.dart';
+import '../report/markdown_report.dart';
 import '../report/terminal.dart';
 import '../rules/android_matrix.dart';
 import '../rules/dependency_health.dart';
+import '../rules/replacements.dart';
 
 /// The published version of this tool.
 const String upkeepVersion = '0.1.2';
@@ -23,28 +31,91 @@ abstract final class ExitCodes {
   /// Android matrix combination that does not build.
   static const int findings = 1;
 
-  /// The scan could not run at all.
+  /// The command could not run, or `fix --apply` refused or rolled back.
   static const int error = 2;
 }
 
-/// Runs `upkeep scan` and returns the process exit code.
-Future<int> runScan({
+/// How a command writes its result.
+enum OutputFormat {
+  /// Coloured, for people.
+  text,
+
+  /// A versioned JSON document, for tools. See `json_report.dart`.
+  json,
+
+  /// GitHub-flavoured Markdown, for job summaries and pull requests.
+  markdown,
+}
+
+/// Everything a scan learned, shared by every command so they can never
+/// disagree about a verdict.
+class _Analysis {
+  const _Analysis({
+    required this.pubspec,
+    required this.dependencies,
+    required this.skipped,
+    required this.android,
+    required this.androidFindings,
+  });
+
+  final Pubspec pubspec;
+  final List<DependencyReport> dependencies;
+  final int skipped;
+  final AndroidConfig? android;
+  final List<MatrixFinding> androidFindings;
+}
+
+PubClient _client(bool useCache) {
+  final cache = ResponseCache();
+  if (!useCache) cache.clear();
+  return PubClient(cache: cache);
+}
+
+/// Looks up and attaches curated successors for [reports].
+Future<List<DependencyReport>> _withSuccessors(
+  List<DependencyReport> reports,
+  PubClient pub,
+  HealthEngine engine,
+) async {
+  const curated = CuratedReplacements();
+  final wanted = curated.candidates(reports);
+  if (wanted.isEmpty) return reports;
+  return curated.attach(reports, await pub.fetchAll(wanted), engine);
+}
+
+/// Writes a failure in the format the caller asked for.
+void _fail(StringSink sink, Style style, OutputFormat format, String command, String message) {
+  switch (format) {
+    case OutputFormat.json:
+      sink.writeln(encodeJson({
+        'schemaVersion': jsonSchemaVersion,
+        'tool': {'name': 'upkeep', 'version': upkeepVersion},
+        'command': command,
+        'error': message,
+        'exitCode': ExitCodes.error,
+      }));
+    case OutputFormat.markdown:
+      sink.writeln('## upkeep could not run\n\n$message');
+    case OutputFormat.text:
+      sink.writeln(style.red('upkeep: $message'));
+  }
+}
+
+Future<_Analysis?> _analyze({
   required String projectPath,
-  bool useCache = true,
-  bool failOnAtRisk = false,
-  Style? style,
-  StringSink? out,
+  required bool useCache,
+  required Style style,
+  required StringSink sink,
+  required OutputFormat format,
+  required String command,
   PubClient? client,
 }) async {
-  final sink = out ?? stdout;
-  final styling = style ?? Style();
-
   final Pubspec pubspec;
   try {
     pubspec = Pubspec.load(projectPath);
   } on PubspecException catch (e) {
-    sink.writeln(styling.red('upkeep: ${e.message}'));
-    return ExitCodes.error;
+    _fail(sink, style, format, command, e.message);
+    return null;
   }
 
   final lock = Lockfile.load(projectPath);
@@ -52,41 +123,307 @@ Future<int> runScan({
 
   final hosted =
       pubspec.dependencies.where((d) => d.source == DepSource.hosted).map((d) => d.name).toList();
-  final skipped = pubspec.dependencies.length - hosted.length;
 
-  final cache = ResponseCache();
-  if (!useCache) cache.clear();
-  final pub = client ?? PubClient(cache: cache);
-
-  final lookups = await pub.fetchAll(hosted);
-  if (client == null) pub.close();
-
+  final pub = client ?? _client(useCache);
   final engine = HealthEngine(dartSdkVersion: currentDartVersion());
-  final dependencies = engine.evaluate(
-    pubspec.dependencies,
-    lookups,
-    lock.versionOf,
-  );
+  final List<DependencyReport> dependencies;
+  try {
+    final lookups = await pub.fetchAll(hosted);
+    dependencies = await _withSuccessors(
+      engine.evaluate(pubspec.dependencies, lookups, lock.versionOf),
+      pub,
+      engine,
+    );
+  } finally {
+    if (client == null) pub.close();
+  }
 
-  final androidFindings =
-      android == null ? const <MatrixFinding>[] : const AndroidMatrixChecker().check(android);
-
-  TerminalReport(style: styling, out: sink).render(
-    projectName: pubspec.name,
-    dartVersion: currentDartVersion().toString(),
-    toolVersion: upkeepVersion,
+  return _Analysis(
+    pubspec: pubspec,
     dependencies: dependencies,
-    skippedCount: skipped,
-    android: androidFindings,
-    androidChecked: android != null,
+    skipped: pubspec.dependencies.length - hosted.length,
+    android: android,
+    androidFindings:
+        android == null ? const <MatrixFinding>[] : const AndroidMatrixChecker().check(android),
   );
+}
+
+/// Runs `upkeep scan` and returns the process exit code.
+Future<int> runScan({
+  required String projectPath,
+  bool useCache = true,
+  bool failOnAtRisk = false,
+  OutputFormat format = OutputFormat.text,
+  Style? style,
+  StringSink? out,
+  PubClient? client,
+}) async {
+  final sink = out ?? stdout;
+  final styling = style ?? Style();
+
+  final analysis = await _analyze(
+    projectPath: projectPath,
+    useCache: useCache,
+    style: styling,
+    sink: sink,
+    format: format,
+    command: 'scan',
+    client: client,
+  );
+  if (analysis == null) return ExitCodes.error;
+
+  final dependencies = analysis.dependencies;
+  final androidFindings = analysis.androidFindings;
 
   final blocking = dependencies.any((d) => d.verdict.isBlocking) ||
       androidFindings.any((f) => f.level == FindingLevel.fail) ||
       (failOnAtRisk && dependencies.any((d) => d.verdict == Verdict.atRisk));
+  final code = blocking ? ExitCodes.findings : ExitCodes.clean;
 
-  return blocking ? ExitCodes.findings : ExitCodes.clean;
+  switch (format) {
+    case OutputFormat.text:
+      TerminalReport(style: styling, out: sink).render(
+        projectName: analysis.pubspec.name,
+        dartVersion: currentDartVersion().toString(),
+        toolVersion: upkeepVersion,
+        dependencies: dependencies,
+        skippedCount: analysis.skipped,
+        android: androidFindings,
+        androidChecked: analysis.android != null,
+      );
+    case OutputFormat.json:
+      sink.writeln(scanJson(
+        toolVersion: upkeepVersion,
+        projectName: analysis.pubspec.name,
+        dartVersion: currentDartVersion().toString(),
+        dependencies: dependencies,
+        skippedCount: analysis.skipped,
+        androidChecked: analysis.android != null,
+        android: androidFindings,
+        exitCode: code,
+      ));
+    case OutputFormat.markdown:
+      sink.write(scanMarkdown(
+        toolVersion: upkeepVersion,
+        projectName: analysis.pubspec.name,
+        dartVersion: currentDartVersion().toString(),
+        dependencies: dependencies,
+        skippedCount: analysis.skipped,
+        androidChecked: analysis.android != null,
+        android: androidFindings,
+      ));
+  }
+
+  return code;
 }
+
+/// Runs `upkeep fix` and returns the process exit code.
+///
+/// Without [apply] it only prints the plan. The exit codes keep the scan's
+/// meaning: 1 while anything blocking is left, whether it is waiting for
+/// `--apply` or for a person; 2 when applying was refused or rolled back.
+Future<int> runFix({
+  required String projectPath,
+  bool apply = false,
+  bool allowDirty = false,
+  bool useCache = true,
+  bool failOnAtRisk = false,
+  OutputFormat format = OutputFormat.text,
+  Style? style,
+  StringSink? out,
+  PubClient? client,
+  PubGetRunner pubGet = runPubGet,
+}) async {
+  final sink = out ?? stdout;
+  final styling = style ?? Style();
+
+  final analysis = await _analyze(
+    projectPath: projectPath,
+    useCache: useCache,
+    style: styling,
+    sink: sink,
+    format: format,
+    command: 'fix',
+    client: client,
+  );
+  if (analysis == null) return ExitCodes.error;
+
+  final plan = const FixPlanner().plan(
+    projectRoot: projectPath,
+    dependencies: analysis.dependencies,
+    android: analysis.androidFindings,
+    androidConfig: analysis.android,
+    references: ReferenceIndex.scan(
+      projectPath,
+      analysis.dependencies.map((d) => d.name),
+    ),
+  );
+
+  final report = FixReport(style: styling, out: sink);
+  final name = analysis.pubspec.name;
+
+  bool blockingLeft(bool automaticDone) =>
+      (!automaticDone && plan.automatic.any((f) => f.isBlocking)) ||
+      plan.todos.any((t) => t.isBlocking) ||
+      (failOnAtRisk && analysis.dependencies.any((d) => d.verdict == Verdict.atRisk));
+
+  void emit({ApplyResult? result, ApplyRefused? refusal, required int code}) {
+    switch (format) {
+      case OutputFormat.json:
+        sink.writeln(fixJson(
+          toolVersion: upkeepVersion,
+          projectName: name,
+          plan: plan,
+          result: result,
+          refusedBecause: refusal?.message,
+          exitCode: code,
+        ));
+      case OutputFormat.markdown:
+        sink.write(refusal != null
+            ? '## upkeep did not change anything\n\n${refusal.message}\n'
+            : fixMarkdown(toolVersion: upkeepVersion, projectName: name, plan: plan, result: result));
+      case OutputFormat.text:
+        if (refusal != null) {
+          report.renderRefused(refusal);
+        } else if (result != null) {
+          report.renderApplied(projectName: name, toolVersion: upkeepVersion, plan: plan, result: result);
+        } else {
+          report.renderPlan(projectName: name, toolVersion: upkeepVersion, plan: plan);
+        }
+    }
+  }
+
+  if (!apply || plan.automatic.isEmpty) {
+    final code = blockingLeft(false) ? ExitCodes.findings : ExitCodes.clean;
+    emit(code: code);
+    return code;
+  }
+
+  final ApplyResult result;
+  try {
+    result = await FixApplier(pubGet: pubGet, allowDirty: allowDirty).apply(
+      projectPath,
+      plan.automatic,
+      isFlutterProject: analysis.pubspec.isFlutterProject,
+    );
+  } on ApplyRefused catch (refusal) {
+    emit(refusal: refusal, code: ExitCodes.error);
+    return ExitCodes.error;
+  }
+
+  final code = result.wasReverted
+      ? ExitCodes.error
+      : (blockingLeft(true) ? ExitCodes.findings : ExitCodes.clean);
+  emit(result: result, code: code);
+  return code;
+}
+
+/// Runs `upkeep explain <package>` and returns the process exit code.
+///
+/// Works inside or outside a project. Inside one, the package is judged as
+/// declared and located in the code; outside, it is judged as if added today.
+/// Exits 1 when the verdict would block a build, so it doubles as a pre-add
+/// check: `upkeep explain some_package && dart pub add some_package`.
+Future<int> runExplain({
+  required String package,
+  required String projectPath,
+  bool useCache = true,
+  OutputFormat format = OutputFormat.text,
+  Style? style,
+  StringSink? out,
+  PubClient? client,
+}) async {
+  final sink = out ?? stdout;
+  final styling = style ?? Style();
+
+  Pubspec? pubspec;
+  try {
+    pubspec = Pubspec.load(projectPath);
+  } on PubspecException {
+    pubspec = null;
+  }
+
+  DeclaredDependency? declared;
+  for (final dep in pubspec?.dependencies ?? const <DeclaredDependency>[]) {
+    if (dep.name == package) declared = dep;
+  }
+  if (declared != null && declared.source != DepSource.hosted) {
+    _fail(sink, styling, format, 'explain',
+        '$package comes from ${declared.source.name}, not pub.dev, so there is nothing to judge.');
+    return ExitCodes.error;
+  }
+
+  final dependency =
+      declared ?? DeclaredDependency(name: package, source: DepSource.hosted, isDev: false);
+  final lock = pubspec == null ? const Lockfile({}) : Lockfile.load(projectPath);
+
+  final pub = client ?? _client(useCache);
+  final engine = HealthEngine(dartSdkVersion: currentDartVersion());
+  final PackageLookup lookup;
+  DependencyReport? report;
+  try {
+    lookup = await pub.fetch(package);
+    report = engine.evaluate([dependency], {package: lookup}, lock.versionOf).single;
+    report = (await _withSuccessors([report], pub, engine)).single;
+  } finally {
+    if (client == null) pub.close();
+  }
+
+  final references = declared == null
+      ? const <Reference>[]
+      : ReferenceIndex.scan(projectPath, [package]).dartReferencesTo(package);
+
+  final code = switch (lookup.status) {
+    LookupStatus.found => report.verdict.isBlocking ? ExitCodes.findings : ExitCodes.clean,
+    _ => ExitCodes.error,
+  };
+  final shown = lookup.info == null ? null : report;
+
+  switch (format) {
+    case OutputFormat.json:
+      sink.writeln(explainJson(
+        toolVersion: upkeepVersion,
+        package: package,
+        status: lookup.status,
+        report: shown,
+        declared: declared != null,
+        references: [for (final r in references) {'file': r.file, 'line': r.line}],
+        dartVersion: currentDartVersion().toString(),
+        exitCode: code,
+      ));
+    case OutputFormat.markdown:
+      // The explanation is aligned columns, so it travels as a fenced block.
+      final plain = StringBuffer();
+      _renderExplain(Style(enabled: false), plain, package, lookup.status, shown, declared != null, references);
+      sink
+        ..writeln('```text')
+        ..write(plain.toString().trim())
+        ..writeln()
+        ..writeln('```');
+    case OutputFormat.text:
+      _renderExplain(styling, sink, package, lookup.status, shown, declared != null, references);
+  }
+  return code;
+}
+
+void _renderExplain(
+  Style style,
+  StringSink sink,
+  String package,
+  LookupStatus status,
+  DependencyReport? report,
+  bool declared,
+  List<Reference> references,
+) =>
+    ExplainReport(style: style, out: sink).render(
+      toolVersion: upkeepVersion,
+      package: package,
+      dartVersion: currentDartVersion().toString(),
+      status: status,
+      report: report,
+      declared: declared,
+      references: references,
+    );
 
 /// The Dart SDK running this process.
 ///

@@ -16,18 +16,27 @@ enum FindingLevel {
   unchecked,
 }
 
+/// Which part of the matrix a finding is about.
+enum MatrixCheck { agp, gradle, jdk, compileSdk }
+
 /// One statement about the Android build configuration.
 class MatrixFinding {
   const MatrixFinding({
     required this.level,
+    required this.check,
     required this.title,
     this.detail,
     this.fix,
     this.fixFile,
+    this.requiredVersion,
   });
 
   final FindingLevel level;
+  final MatrixCheck check;
   final String title;
+
+  /// The minimum version the finding asks for, when it names one.
+  final String? requiredVersion;
 
   /// The evidence behind the finding.
   final String? detail;
@@ -52,6 +61,7 @@ class AndroidMatrixChecker {
     if (agp == null) {
       findings.add(const MatrixFinding(
         level: FindingLevel.unchecked,
+        check: MatrixCheck.agp,
         title: 'Android Gradle Plugin version not found',
         detail: 'Looked in android/settings.gradle[.kts] and android/build.gradle[.kts]. '
             'Without it the build matrix cannot be checked.',
@@ -63,6 +73,7 @@ class AndroidMatrixChecker {
     if (required == null) {
       findings.add(MatrixFinding(
         level: FindingLevel.warn,
+        check: MatrixCheck.agp,
         title: 'AGP $agp is outside the bundled compatibility data',
         detail: 'upkeep carries Google\'s published requirements for AGP 8.0 through '
             '${newestKnownAgp.agp}. Rather than guess at $agp, it is skipping the checks that '
@@ -86,6 +97,7 @@ class AndroidMatrixChecker {
     if (gradle == null) {
       return const MatrixFinding(
         level: FindingLevel.unchecked,
+        check: MatrixCheck.gradle,
         title: 'Gradle wrapper version not found',
         detail: 'Expected android/gradle/wrapper/gradle-wrapper.properties.',
       );
@@ -94,16 +106,19 @@ class AndroidMatrixChecker {
     if (compareLooseVersions(gradle, required.gradleMin) < 0) {
       return MatrixFinding(
         level: FindingLevel.fail,
+        check: MatrixCheck.gradle,
         title: 'Gradle $gradle is too old for AGP $agp',
         detail: 'AGP $agp requires Gradle ${required.gradleMin} or newer. '
             'This combination does not build.',
         fix: './gradlew wrapper --gradle-version=${required.gradleMin}',
         fixFile: 'run inside android/',
+        requiredVersion: required.gradleMin,
       );
     }
 
     return MatrixFinding(
       level: FindingLevel.pass,
+      check: MatrixCheck.gradle,
       title: 'Gradle $gradle satisfies AGP $agp',
       detail: 'Requires ${required.gradleMin} or newer.',
     );
@@ -114,6 +129,7 @@ class AndroidMatrixChecker {
     if (jdk == null) {
       return const MatrixFinding(
         level: FindingLevel.unchecked,
+        check: MatrixCheck.jdk,
         title: 'JDK version not detected',
         detail: 'Could not run `java -version`.',
       );
@@ -122,6 +138,7 @@ class AndroidMatrixChecker {
     if (jdk < required.jdkMin) {
       return MatrixFinding(
         level: FindingLevel.fail,
+        check: MatrixCheck.jdk,
         title: 'JDK $jdk is below the JDK ${required.jdkMin} that AGP $agp requires',
         detail: 'Detected via ${config.jdkSource}. Note this is the JDK on PATH; '
             'Gradle may be configured to use a different one.',
@@ -132,6 +149,7 @@ class AndroidMatrixChecker {
 
     return MatrixFinding(
       level: FindingLevel.pass,
+      check: MatrixCheck.jdk,
       title: 'JDK $jdk satisfies AGP $agp',
       detail: 'Requires JDK ${required.jdkMin} or newer. Detected via ${config.jdkSource}.',
     );
@@ -141,6 +159,7 @@ class AndroidMatrixChecker {
     if (config.compileSdkIsFlutterManaged) {
       return const MatrixFinding(
         level: FindingLevel.pass,
+        check: MatrixCheck.compileSdk,
         title: 'compileSdk is managed by Flutter',
         detail: 'Set from flutter.compileSdkVersion, so it tracks your Flutter SDK.',
       );
@@ -156,6 +175,7 @@ class AndroidMatrixChecker {
       final inferred = required.maxApiInferred;
       return MatrixFinding(
         level: inferred ? FindingLevel.warn : FindingLevel.fail,
+        check: MatrixCheck.compileSdk,
         title: 'compileSdk $compileSdk is above what AGP $agp supports',
         detail: inferred
             ? 'AGP $agp appears to top out at API $maxApi, though Google does not state it '
@@ -169,6 +189,7 @@ class AndroidMatrixChecker {
 
     return MatrixFinding(
       level: FindingLevel.pass,
+      check: MatrixCheck.compileSdk,
       title: 'compileSdk $compileSdk is within AGP $agp limits',
       detail: 'Supports up to API $maxApi.',
     );

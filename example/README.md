@@ -28,11 +28,6 @@ DEPENDENCIES   27 direct
   DISCONTINUED   telephony  0.2.0
       marked discontinued by its publisher on pub.dev
 
-  INCOMPATIBLE   lucide_icons  0.257.0
-      its newest release caps Dart at >=2.12.0 <3.0.0, which excludes
-      the Dart 3.11.0 in use here
-      no release has ever supported this Dart, so waiting will not fix it
-
   AT RISK        isar  3.1.0+1
       declares support only up to Dart <3.0.0; it resolves today through
       pub's Dart 3 allowance, not because it was updated

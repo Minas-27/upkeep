@@ -96,9 +96,49 @@ void main() {
       expect(report.verdict, Verdict.stale);
       expect(report.reasons.join(' '), contains('score data was unavailable'));
     });
+
+    test('a failed pub.dev analysis is missing data too', () {
+      // Modelled on `phosphor_flutter`: its constraint allows Dart 3 and it
+      // resolves, but pub.dev's analysis errored, leaving 55 points and no
+      // compatibility tags. An earlier engine called it dead on that alone.
+      final report = judge(pkg(
+        sdk: '>=2.12.0 <4.0.0',
+        points: 55,
+        tags: const ['has:error', 'license:mit'],
+        monthsAgo: 28,
+        downloads: 72000,
+      ));
+
+      expect(report.verdict, Verdict.stale);
+      expect(report.reasons.join(' '), contains('analysis of this package failed'));
+    });
   });
 
   group('sdk constraints', () {
+    test('pub\'s Dart 3 allowance holds even when pub.dev\'s analysis failed', () {
+      // Modelled on `lucide_icons` 0.257.0: `>=2.12.0 <3.0.0`, analysis errored
+      // so there is no dart3 tag, yet it resolves in real Dart 3.11 projects.
+      final report = judge(pkg(
+        sdk: '>=2.12.0 <3.0.0',
+        points: 45,
+        tags: const ['has:error'],
+        monthsAgo: 38,
+      ));
+
+      expect(report.verdict, Verdict.atRisk);
+      expect(report.verdict.isBlocking, isFalse);
+      expect(report.reasons.join(' '), contains("pub's Dart 3 allowance"));
+    });
+
+    test('the allowance follows pub\'s rule exactly', () {
+      bool allowed(String c) => HealthEngine.resolvesUnderDart3Allowance(VersionConstraint.parse(c));
+      expect(allowed('>=2.12.0 <3.0.0'), isTrue);
+      expect(allowed('>=2.12.0-0 <3.0.0'), isTrue);
+      expect(allowed('>=2.17.0 <3.0.0'), isTrue);
+      expect(allowed('>=2.7.0 <3.0.0'), isFalse, reason: 'not null-safe');
+      expect(allowed('>=2.12.0 <2.19.0'), isFalse, reason: 'a tighter ceiling is not relaxed');
+    });
+
     test('a newer-Dart requirement is not the package\'s fault', () {
       final report = judge(pkg(latest: '4.0.0', sdk: '^3.12.0'));
 
@@ -125,12 +165,13 @@ void main() {
       expect(report.reasons.join(' '), contains('Dart 3 allowance'));
     });
 
-    test('a pre-Dart-3 ceiling without the tag stays a dead end', () {
-      // Modelled on `lucide_icons`: capped at <3.0.0, 45/160 points, and no
-      // dart3 tag, so the resolver really will not take it.
+    test('a ceiling pub does not relax stays a dead end', () {
+      // Not null-safe, so pub's Dart 3 allowance does not apply and the
+      // resolver really will not take it. (`lucide_icons` was once the example
+      // here, wrongly: `>=2.12.0 <3.0.0` is relaxed and resolves on Dart 3.)
       final report = judge(pkg(
-        latest: '0.257.0',
-        sdk: '>=2.12.0 <3.0.0',
+        latest: '0.9.0',
+        sdk: '>=2.7.0 <3.0.0',
         points: 45,
         tags: const [],
       ));

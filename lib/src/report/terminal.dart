@@ -77,7 +77,10 @@ class TerminalReport {
       }
       final replacement = report.replacedBy;
       if (replacement != null) {
-        _out.writeln('      ${_s.cyan('move to $replacement')}');
+        final source = report.replacementSource == ReplacementSource.curated
+            ? _s.dim('   successor named at ${report.replacementEvidence}')
+            : '';
+        _out.writeln('      ${_s.cyan('move to $replacement')}$source');
       }
     }
 

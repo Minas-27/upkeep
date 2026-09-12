@@ -1,0 +1,10 @@
+name: action_fixture
+description: A deliberately unhealthy project the upkeep Action is tested against.
+publish_to: none
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  http_server: ^1.0.0
+  path: ^1.9.0
+  pedantic: ^1.11.1

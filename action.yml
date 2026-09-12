@@ -1,0 +1,84 @@
+name: upkeep
+description: Find the Flutter and Dart dependencies that are dying, check the Android build matrix, and open a pull request with the safe fixes.
+author: Abraham Addisu
+branding:
+  icon: activity
+  color: green
+
+inputs:
+  command:
+    description: >-
+      scan: report and fail the job on blocking findings.
+      fix-pr: apply the automatic fixes and open or update a pull request with them.
+    default: scan
+  path:
+    description: Project directory, relative to the repository root.
+    default: .
+  fail-on-at-risk:
+    description: Also fail the scan on AT RISK dependencies.
+    default: 'false'
+  version:
+    description: >-
+      upkeep version to install from pub.dev. Empty runs the CLI that ships with
+      this action, so the action ref you pin is exactly the upkeep you get.
+    default: ''
+  flutter:
+    description: "Install Flutter instead of plain Dart. auto detects 'sdk: flutter' in pubspec.yaml."
+    default: auto
+  branch:
+    description: fix-pr only. Branch the fixes are pushed to.
+    default: upkeep/fixes
+  token:
+    description: fix-pr only. Token that can push branches and open pull requests.
+    default: ${{ github.token }}
+
+outputs:
+  exit-code:
+    description: The upkeep exit code. 0 clean, 1 blocking findings, 2 could not run.
+    value: ${{ steps.run.outputs.exit-code }}
+  report:
+    description: Path to the JSON report, schema version 1.
+    value: ${{ steps.run.outputs.report }}
+  pull-request:
+    description: fix-pr only. URL of the pull request, when one was opened or updated.
+    value: ${{ steps.run.outputs.pull-request }}
+
+runs:
+  using: composite
+  steps:
+    - id: sdk
+      shell: bash
+      env:
+        UPKEEP_PATH: ${{ inputs.path }}
+        UPKEEP_FLUTTER: ${{ inputs.flutter }}
+      run: bash "${{ github.action_path }}/action/detect-sdk.sh"
+
+    - if: steps.sdk.outputs.flutter == 'true'
+      uses: subosito/flutter-action@v2
+      with:
+        channel: stable
+        cache: true
+
+    - if: steps.sdk.outputs.flutter != 'true'
+      uses: dart-lang/setup-dart@v1
+
+    - shell: bash
+      env:
+        UPKEEP_VERSION: ${{ inputs.version }}
+      run: |
+        if [[ -n "$UPKEEP_VERSION" ]]; then
+          dart pub global activate upkeep "$UPKEEP_VERSION"
+        else
+          dart pub global activate --source path "$GITHUB_ACTION_PATH"
+        fi
+        echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
+
+    - id: run
+      shell: bash
+      env:
+        UPKEEP_COMMAND: ${{ inputs.command }}
+        UPKEEP_PATH: ${{ inputs.path }}
+        UPKEEP_FAIL_ON_AT_RISK: ${{ inputs.fail-on-at-risk }}
+        UPKEEP_BRANCH: ${{ inputs.branch }}
+        GH_TOKEN: ${{ inputs.token }}
+      run: bash "${{ github.action_path }}/action/run.sh"

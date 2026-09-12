@@ -22,6 +22,7 @@ class PackageInfo {
     required this.isDiscontinued,
     this.replacedBy,
     required this.hasScoreData,
+    this.isFlutterPlugin,
   });
 
   final String name;
@@ -55,6 +56,11 @@ class PackageInfo {
   /// nothing more than a dropped connection.
   final bool hasScoreData;
 
+  /// True when the latest release declares `flutter: plugin:`, meaning it
+  /// carries native code that works with no Dart import at all. Null when the
+  /// published pubspec could not be read, which proves nothing either way.
+  final bool? isFlutterPlugin;
+
   /// Score as a fraction of the maximum, or null when pub.dev reported no max.
   double? get pointsRatio => maxPoints <= 0 ? null : grantedPoints / maxPoints;
 
@@ -65,6 +71,17 @@ class PackageInfo {
   }
 
   bool get isDart3Compatible => tags.contains('is:dart3-compatible');
+
+  /// True when pub.dev tried to analyse the package and failed (`has:error`).
+  ///
+  /// A failed analysis grants few points and no compatibility tags at all, so
+  /// it reads exactly like a neglected, Dart-2-only package. It is not evidence
+  /// of either. `phosphor_flutter` allows Dart 3 in its own constraint and
+  /// resolves fine, yet was once called dead on the strength of this.
+  bool get analysisFailed => tags.contains('has:error');
+
+  /// True when points and tags can be trusted as pub.dev's judgement.
+  bool get hasAnalysis => hasScoreData && !analysisFailed;
   bool get isWasmReady => tags.contains('is:wasm-ready');
   bool get isFlutterFavorite => tags.contains('is:flutter-favorite');
 
@@ -151,8 +168,11 @@ class PubClient {
     }
 
     VersionConstraint? sdk;
+    bool? isPlugin;
     final pubspec = latest['pubspec'];
     if (pubspec is Map<String, dynamic>) {
+      final flutter = pubspec['flutter'];
+      isPlugin = flutter is Map<String, dynamic> && flutter['plugin'] != null;
       final env = pubspec['environment'];
       if (env is Map<String, dynamic> && env['sdk'] is String) {
         try {
@@ -182,6 +202,7 @@ class PubClient {
         isDiscontinued: meta['isDiscontinued'] == true,
         replacedBy: meta['replacedBy'] is String ? meta['replacedBy'] as String : null,
         hasScoreData: hasScore,
+        isFlutterPlugin: isPlugin,
       ),
     );
   }

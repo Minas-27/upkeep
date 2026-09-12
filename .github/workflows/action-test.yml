@@ -1,0 +1,47 @@
+# Runs the upkeep Action against a deliberately unhealthy fixture and checks
+# that it reports and fixes what it should. Only runs on the action-test branch.
+name: action-test
+
+on:
+  push:
+    branches: [action-test]
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: upkeep
+        uses: ./
+        continue-on-error: true
+        with:
+          path: .github/action-fixture
+      - name: Expect blocking findings, a build failure and a JSON report
+        run: |
+          set -x
+          test "${{ steps.upkeep.outputs.exit-code }}" = "1"
+          jq -e '.schemaVersion == 1 and .summary.blocking == 2 and .summary.buildFailures == 1' "${{ steps.upkeep.outputs.report }}"
+          jq -e '[.dependencies[] | select(.name == "pedantic")][0].replacement.package == "lints"' "${{ steps.upkeep.outputs.report }}"
+
+  fix-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - id: upkeep
+        uses: ./
+        with:
+          command: fix-pr
+          path: .github/action-fixture
+          branch: upkeep/action-test-fixes
+      - name: Expect a pull request with only the two fixed files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -x
+          test -n "${{ steps.upkeep.outputs.pull-request }}"
+          files="$(gh pr view "${{ steps.upkeep.outputs.pull-request }}" --json files --jq '[.files[].path] | sort | join(",")')"
+          test "$files" = ".github/action-fixture/android/gradle/wrapper/gradle-wrapper.properties,.github/action-fixture/pubspec.yaml"

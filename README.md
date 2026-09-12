@@ -30,38 +30,87 @@ $ dart pub global run upkeep scan
 ```
 
 ```
-upkeep 0.1.0   my_app   Dart 3.11.0
+upkeep 0.2.0   my_app   Dart 3.11.0
 
-DEPENDENCIES   27 direct
+DEPENDENCIES   23 direct
 
   DISCONTINUED   telephony  0.2.0
       marked discontinued by its publisher on pub.dev
 
-  INCOMPATIBLE   lucide_icons  0.257.0
-      its newest release (0.257.0) caps Dart at >=2.12.0 <3.0.0, which excludes the Dart 3.11.0 in use here
-      no release has ever supported this Dart, so waiting will not fix it
+  AT RISK        hive  2.2.3
+      declares support only up to Dart >=2.12.0 <3.0.0; it resolves today through pub's Dart 3 allowance, not because it was updated
+      no release in 50 months
 
-  AT RISK        isar  3.1.0+1
-      declares support only up to Dart >=2.17.0 <3.0.0; it resolves today
-      through pub's Dart 3 allowance, not because it was updated
-      no release in 30 months
+  AT RISK        hive_flutter  1.1.0
+      declares support only up to Dart >=2.12.0 <3.0.0; it resolves today through pub's Dart 3 allowance, not because it was updated
+      no release in 62 months
 
-  SDK BLOCKED    8 packages have a newer release your Dart is too old for
-      cached_network_image, flutter_riverpod, go_router, lottie, pdf, printing, ...
+  SDK BLOCKED    6 packages have a newer release your Dart is too old for
+      flutter_riverpod, go_router, lottie, pdf, printing, shimmer
       upgrade Flutter to pick these up: flutter upgrade
 
-  11 healthy  .  7 stale  .  3 skipped (sdk, git or path)
+  13 healthy  .  1 stale  .  2 skipped (sdk, git or path)
 
 ANDROID BUILD
 
-  FAIL       Gradle 8.4 is too old for AGP 8.9
-             AGP 8.9 requires Gradle 8.11.1 or newer. This combination does not build.
-             fix: ./gradlew wrapper --gradle-version=8.11.1   (run inside android/)
+  FAIL       Gradle 8.4 is too old for AGP 8.11.1
+             AGP 8.11.1 requires Gradle 8.13 or newer. This combination does not build.
+             fix: ./gradlew wrapper --gradle-version=8.13   (run inside android/)
 
-  PASS       JDK 17 satisfies AGP 8.9
+  PASS       JDK 17 satisfies AGP 8.11.1
+             Requires JDK 17 or newer. Detected via java -version on PATH.
 
-1 blocking, 1 at risk, 1 build failure
+  PASS       compileSdk is managed by Flutter
+             Set from flutter.compileSdkVersion, so it tracks your Flutter SDK.
+
+1 blocking, 2 at risk, 1 build failure
 ```
+
+## Fixing what it found
+
+`upkeep fix` turns a scan into a plan: the changes it can make safely on its
+own, and a to-do list for everything that needs a person, with the file and line
+where each affected package is used. It changes nothing until you add
+`--apply`.
+
+```
+upkeep 0.2.0   my_app   fix plan
+
+AUTOMATIC   2 changes upkeep can make, each one reversible
+
+  1  Raise the Gradle wrapper to 8.11.1
+     AGP 8.9.0 requires Gradle 8.11.1 or newer; the wrapper is on 8.4
+     android/gradle/wrapper/gradle-wrapper.properties
+
+  2  Remove pedantic, which nothing imports
+     marked discontinued by its publisher on pub.dev
+     no Dart file imports package:pedantic, and no config file names it
+     pubspec.yaml
+
+TO DO   1 change needs a person
+
+  [ ] Replace telephony
+      marked discontinued by its publisher on pub.dev
+      no maintained replacement is known yet; choose one on pub.dev
+      used in 1 file:
+        lib/main.dart:1
+
+Run upkeep fix --apply to make the 2 automatic changes.
+```
+
+Only two kinds of change are ever automatic, and both are narrow on purpose:
+
+- **Raising the Gradle wrapper** to the version Google publishes as the minimum
+  for your AGP. Skipped when the wrapper pins a checksum; that one goes to
+  `./gradlew wrapper` instead.
+- **Removing a blocking dependency nothing refers to.** Not when any Dart file
+  or config file mentions it, not for dev dependencies (those are usually run,
+  not imported), and not for Flutter plugins, which can work with no import at
+  all.
+
+`--apply` refuses to run unless the files it edits are committed, so
+`git checkout` undoes it. After editing `pubspec.yaml` it runs `pub get`, and if
+the resolver rejects the result every file is put back exactly as it was.
 
 ## What it checks
 
@@ -83,7 +132,8 @@ So:
   with `upkeep` and see immediately why it said what it said.
 - **Missing data is never evidence.** If pub.dev cannot be reached, the verdict
   is `UNKNOWN`, not `DEAD`. Requests are retried, and a dropped response is
-  never reported as a missing package.
+  never reported as a missing package. When pub.dev's own analysis of a package
+  failed, its low points and missing tags are not held against it either.
 - **Stable is not abandoned.** A small, finished, widely-used package that has
   not needed a release in two years is not dying, and `upkeep` will not say it
   is.
@@ -97,10 +147,75 @@ So:
   newest release needs a newer Dart than you have are grouped into one line and
   never fail your build.
 
+## Explaining a verdict
+
+`upkeep explain <package>` shows every fact a verdict rests on: release dates,
+the SDK constraint, pub points, downloads, the Dart 3 tag, whether pub.dev's own
+analysis succeeded, and where the package is used in your code. It works outside
+a project too, which makes it a check before adding a dependency:
+
+```console
+$ upkeep explain some_package && dart pub add some_package
+```
+
+## Successors for packages nobody retired
+
+pub.dev only names a replacement when a publisher sets one. Most dead packages
+were simply left behind. upkeep carries a curated map of successors for those,
+and holds it to a stricter bar than anything else it says:
+
+- every entry cites a primary source, such as the old package's own README
+  naming its successor, and the report prints that link
+- where several alternatives compete and nobody official named one, the package
+  is left out
+- a successor is only suggested for a package already judged unhealthy, and only
+  when the successor itself checks out healthy on pub.dev today
+
 ## In CI
 
-`upkeep` exits non-zero when it finds something blocking, so it works as a CI
-check with no extra configuration.
+### GitHub Action
+
+```yaml
+name: upkeep
+on:
+  pull_request:
+  schedule:
+    - cron: "0 6 * * 1"
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Minas-27/upkeep@main
+```
+
+The scan fails the job on blocking findings, writes the report to the job
+summary, and leaves a JSON report at the `report` output. Flutter or plain Dart
+is picked from your `pubspec.yaml`.
+
+To have upkeep open the fix pull request for you:
+
+```yaml
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Minas-27/upkeep@main
+        with:
+          command: fix-pr
+```
+
+It applies only the automatic fixes, verifies them with `pub get`, commits only
+the files those fixes touched to `upkeep/fixes`, and opens or updates one pull
+request. Its description is the full plan, including the to-dos that still need
+a person. The branch is force-pushed on every run, so commit elsewhere.
+
+### Anywhere else
 
 ```yaml
 - run: dart pub global activate upkeep
@@ -111,17 +226,26 @@ check with no extra configuration.
 |---|---|
 | `0` | Clean |
 | `1` | Blocking findings: a discontinued, incompatible or dead dependency, or an Android matrix that does not build |
-| `2` | The scan could not run |
+| `2` | The command could not run, or `fix --apply` refused or rolled back |
 
 Add `--fail-on-at-risk` to treat warnings as failures too.
+
+`--format json` prints a versioned document (`schemaVersion: 1`) for tools:
+verdicts, reasons, replacements, Android findings, fix plans with file and line
+references, and the exit code. Fields are only ever added; anything removed or
+renamed bumps the schema version. `--format markdown` prints GitHub-flavoured
+Markdown for job summaries and pull request descriptions.
 
 ## Options
 
 ```
--p, --path             Project directory to scan (default: .)
+-p, --path             Project directory (default: .)
+-f, --format           text, json or markdown (default: text)
     --no-cache         Ignore cached pub.dev responses and refetch
     --fail-on-at-risk  Also exit non-zero for AT RISK dependencies
     --no-color         Disable coloured output
+    --apply            fix only: make the automatic changes
+    --allow-dirty      fix only: apply even with uncommitted changes, or outside git
     --version          Show the upkeep version
 -h, --help             Show usage
 ```
@@ -131,7 +255,8 @@ network work.
 
 ## Status
 
-Version 0.1.0. It diagnoses; it does not yet edit your files. Automatic fixes
-land once the diagnosis has earned the right to be trusted.
+Version 0.2.0. It diagnoses, and it fixes the narrow set of things that can be
+fixed without judgement. Everything else it hands to you as a to-do, with the
+locations.
 
 Built by [Abraham Addisu](https://abroid.dev). MIT licensed.

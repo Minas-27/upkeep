@@ -70,6 +70,15 @@ class HealthThresholds {
   final double fullyScoringRatio;
 }
 
+/// Who named a dependency's replacement.
+enum ReplacementSource {
+  /// The publisher, through pub.dev's `replacedBy` field.
+  publisher,
+
+  /// upkeep's curated map, with a cited source.
+  curated,
+}
+
 /// The verdict on one declared dependency, with the reasons behind it.
 class DependencyReport {
   const DependencyReport({
@@ -81,6 +90,8 @@ class DependencyReport {
     this.declaredConstraint,
     this.resolvedVersion,
     this.replacedBy,
+    this.replacementSource,
+    this.replacementEvidence,
     this.requiresDart,
   });
 
@@ -98,9 +109,30 @@ class DependencyReport {
   /// The maintained package to move to, when one is known.
   final String? replacedBy;
 
+  /// Who named [replacedBy].
+  final ReplacementSource? replacementSource;
+
+  /// Where a curated replacement is documented.
+  final String? replacementEvidence;
+
   /// The Dart constraint the newest release asks for, when that is what blocks
   /// the upgrade. Used to group SDK-blocked packages into one message.
   final String? requiresDart;
+
+  /// This report with a curated successor attached.
+  DependencyReport withCuratedReplacement(String replacement, String evidence) => DependencyReport(
+        name: name,
+        isDev: isDev,
+        verdict: verdict,
+        reasons: reasons,
+        info: info,
+        declaredConstraint: declaredConstraint,
+        resolvedVersion: resolvedVersion,
+        replacedBy: replacement,
+        replacementSource: ReplacementSource.curated,
+        replacementEvidence: evidence,
+        requiresDart: requiresDart,
+      );
 
   /// True when the resolved version is behind the latest published one.
   bool get isBehind {
@@ -185,6 +217,7 @@ class HealthEngine {
         declaredConstraint: dep.constraint,
         resolvedVersion: resolved,
         replacedBy: info.replacedBy,
+        replacementSource: info.replacedBy == null ? null : ReplacementSource.publisher,
       );
     }
 
@@ -211,7 +244,8 @@ class HealthEngine {
       // pub.dev: Dart 3's pub relaxes a `<3.0.0` upper bound for null-safe
       // packages, and pub.dev records the outcome in `is:dart3-compatible`.
       // That tag is the resolver's own answer, and it beats our arithmetic.
-      final exempt = info.hasScoreData && info.isDart3Compatible && dartSdkVersion.major >= 3;
+      final exempt = dartSdkVersion.major >= 3 &&
+          ((info.hasAnalysis && info.isDart3Compatible) || resolvesUnderDart3Allowance(sdkConstraint));
 
       if (!exempt) {
         return DependencyReport(
@@ -235,19 +269,26 @@ class HealthEngine {
           'through pub\'s Dart 3 allowance, not because it was updated';
     }
 
-    // Score and tag data are only trustworthy when pub.dev actually answered.
-    // Without it, absent tags and zero points look identical to a neglected
-    // package, and upkeep would accuse healthy code on the strength of a
-    // dropped connection.
-    if (!info.hasScoreData) {
+    // Score and tag data are only trustworthy when pub.dev actually answered,
+    // and actually managed to analyse the package. Without that, absent tags and
+    // low points look identical to a neglected package, and upkeep would accuse
+    // healthy code on the strength of a dropped connection or a failed analysis.
+    if (!info.hasAnalysis) {
       final months = info.monthsSinceRelease;
+      final unavailable = info.hasScoreData
+          ? 'pub.dev\'s analysis of this package failed, so its points and compatibility '
+              'tags were not judged'
+          : 'pub.dev score data was unavailable, so nothing further was judged';
       if (legacyCeiling != null) {
-        return _report(dep, info, resolved, Verdict.atRisk, [legacyCeiling]);
+        return _report(dep, info, resolved, Verdict.atRisk, [
+          legacyCeiling,
+          if (months >= thresholds.staleMonths) 'no release in $months months',
+        ]);
       }
       if (months >= thresholds.staleMonths) {
         return _report(dep, info, resolved, Verdict.stale, [
           'no release in $months months',
-          'pub.dev score data was unavailable, so nothing further was judged',
+          unavailable,
         ]);
       }
       return _report(dep, info, resolved, Verdict.healthy, const []);
@@ -298,6 +339,28 @@ class HealthEngine {
     }
 
     return _report(dep, info, resolved, Verdict.healthy, const []);
+  }
+
+  /// True when pub's Dart 3 allowance lets [constraint] resolve anyway.
+  ///
+  /// Dart 3's pub reads an upper bound of exactly `<3.0.0` as `<4.0.0` for any
+  /// package whose lower bound is 2.12 or later, the null-safe ones. This is
+  /// the resolver's own rule, so it is applied directly rather than inferred
+  /// from pub.dev's `is:dart3-compatible` tag: that tag disappears whenever
+  /// pub.dev's analysis fails, and `lucide_icons` resolved in real Dart 3
+  /// projects while upkeep called it incompatible.
+  static bool resolvesUnderDart3Allowance(VersionConstraint constraint) {
+    if (constraint is! VersionRange) return false;
+    final min = constraint.min;
+    final max = constraint.max;
+    if (min == null || max == null || constraint.includeMax) return false;
+    // pub_semver stores `<3.0.0` as `<3.0.0-0`, so both spellings are the
+    // ceiling pub relaxes. Any other pre-release ceiling is a real one.
+    final ceilingIsThree = max.major == 3 &&
+        max.minor == 0 &&
+        max.patch == 0 &&
+        (!max.isPreRelease || max.preRelease.join('.') == '0');
+    return ceilingIsThree && min >= Version(2, 12, 0, pre: '0');
   }
 
   /// True when [constraint] excludes [current] because [current] is too old,
