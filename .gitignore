@@ -6,3 +6,13 @@ PRODUCT_PLAN.md
 LAUNCH.md
 HANDOFF.md
 .harness/
+
+# Never commit secrets or signing material
+.env
+.env.*
+*.jks
+*.keystore
+*.pem
+*.p12
+key.properties
+*credentials*.json
