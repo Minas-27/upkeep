@@ -103,6 +103,9 @@ case "$command" in
       url="$existing"
     else
       if ! created="$(gh pr create --base "$base" --head "$branch" --title "$title" --body-file "$body" 2>&1)"; then
+        if [[ "$created" == *"not permitted to create or approve pull requests"* ]]; then
+          fail "The fixes are pushed to $branch, but this repository does not let GitHub Actions open pull requests. Enable it under Settings > Actions > General > Workflow permissions > Allow GitHub Actions to create and approve pull requests, or pass a personal access token as the token input."
+        fi
         fail "gh pr create failed: $(printf '%s' "$created" | tail -n 3 | tr '\n' ' ')"
       fi
       url="$(printf '%s' "$created" | tail -n 1)"

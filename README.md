@@ -207,6 +207,10 @@ jobs:
           command: fix-pr
 ```
 
+GitHub does not let workflows open pull requests until you allow it once:
+**Settings → Actions → General → Workflow permissions → Allow GitHub Actions to
+create and approve pull requests.** Or pass a personal access token as `token`.
+
 It applies only the automatic fixes, verifies them with `pub get`, commits only
 the files those fixes touched to `upkeep/fixes`, and opens or updates one pull
 request. Its description is the full plan, including the to-dos that still need
