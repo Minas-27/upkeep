@@ -1,3 +1,10 @@
+## 0.1.2
+
+- Document the PATH step. `dart pub global activate` puts the executable in
+  `~/.pub-cache/bin`, which is not on PATH by default, so the README's own first
+  instruction failed for a new user. It now says so, and offers
+  `dart pub global run upkeep scan` as the alternative.
+
 ## 0.1.1
 
 - Add an example, so the usage a new user needs is where pub.dev expects it.

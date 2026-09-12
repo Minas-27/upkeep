@@ -9,6 +9,15 @@ $ cd path/to/your_flutter_app
 $ upkeep scan
 ```
 
+`upkeep: command not found` means `~/.pub-cache/bin` is not on your PATH. Either
+add it to your shell profile:
+
+```console
+$ export PATH="$PATH":"$HOME/.pub-cache/bin"
+```
+
+or skip the PATH entirely with `dart pub global run upkeep scan`.
+
 ## What you get
 
 ```

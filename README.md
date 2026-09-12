@@ -15,6 +15,20 @@ $ dart pub global activate upkeep
 $ upkeep scan
 ```
 
+If your shell answers `upkeep: command not found`, `pub` installed the
+executable somewhere that is not on your PATH. Add it once:
+
+```console
+$ export PATH="$PATH":"$HOME/.pub-cache/bin"
+```
+
+Put that line in your `.bashrc`, `.zshrc` or shell profile to make it stick. No
+PATH change needed if you would rather run it through pub:
+
+```console
+$ dart pub global run upkeep scan
+```
+
 ```
 upkeep 0.1.0   my_app   Dart 3.11.0
 
