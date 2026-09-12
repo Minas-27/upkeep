@@ -32,7 +32,7 @@
       "permanent": false
     },
     {
-      "source": "/app/:path*",
+      "source": "/app/(.*)",
       "destination": "/#demo",
       "permanent": false
     }
