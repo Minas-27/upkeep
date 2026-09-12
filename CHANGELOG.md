@@ -1,3 +1,9 @@
+## 0.1.1
+
+- Add an example, so the usage a new user needs is where pub.dev expects it.
+- Stop shipping the landing page inside the package. It was two thirds of the
+  archive and of no use to anyone running the tool.
+
 ## 0.1.0
 
 - Initial release.

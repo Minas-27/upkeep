@@ -12,7 +12,7 @@ import '../rules/android_matrix.dart';
 import '../rules/dependency_health.dart';
 
 /// The published version of this tool.
-const String upkeepVersion = '0.1.0';
+const String upkeepVersion = '0.1.1';
 
 /// Process exit codes. CI depends on these, so they are part of the contract.
 abstract final class ExitCodes {
