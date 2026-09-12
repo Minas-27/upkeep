@@ -9,9 +9,9 @@
 <meta property="og:image" content="https://upkeep.abroid.dev/brand/logo-1200x630.png">
 <meta property="og:url" content="https://upkeep.abroid.dev/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#050807">
+<meta name="theme-color" content="#000000">
 <meta name="color-scheme" content="dark">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%230E6E6E' d='M15 0H49A15 15 0 0 1 64 15V49A15 15 0 0 1 49 64H15A15 15 0 0 1 0 49V15A15 15 0 0 1 15 0Z'/%3E%3Cpath fill='%23fff' d='M15 22H25V37A7 7 0 0 0 39 37V19L49 9V37A17 17 0 0 1 15 37Z'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%23000' d='M15 0H49A15 15 0 0 1 64 15V49A15 15 0 0 1 49 64H15A15 15 0 0 1 0 49V15A15 15 0 0 1 15 0Z' stroke='%23fff' stroke-width='3'/%3E%3Cpath fill='%23fff' d='M15 22H25V37A7 7 0 0 0 39 37V19L49 9V37A17 17 0 0 1 15 37Z'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
@@ -20,12 +20,13 @@
   /* A deliberately single, dark look: this page is for people who live in terminals. */
   :root{
     color-scheme:dark;
-    --bg:#050807; --bg-2:#080C0B; --panel:#0B1110; --panel-2:#0F1716;
-    --line:rgba(255,255,255,.07); --line-2:rgba(255,255,255,.12);
-    --ink:#F2F6F5; --ink-2:#B4C1BE; --ink-3:#7C8B88; --ink-4:#55625F;
-    --teal:#2DD4BF; --teal-2:#5EEAD4; --teal-deep:#0E6E6E; --teal-glow:rgba(45,212,191,.16);
-    --amber:#F5B544; --rose:#F37D6B; --violet:#D48CD8; --sky:#6FBCDE; --green:#6FD68F;
-    --term-bg:#060A09; --term-bar:#0B1211;
+    --bg:#000000; --bg-2:#050505; --panel:#0A0A0A; --panel-2:#111111;
+    --line:rgba(255,255,255,.08); --line-2:rgba(255,255,255,.14);
+    --ink:#FAFAFA; --ink-2:#B5B5B5; --ink-3:#808080; --ink-4:#575757;
+    --teal:#FFFFFF; --teal-2:#EDEDED; --teal-deep:#FFFFFF; --teal-glow:rgba(255,255,255,.08);
+    --amber:#E8B35A; --rose:#EF8471; --violet:#CF97D3; --sky:#86BFD9; --green:#86CF9B;
+    --term-bg:#0A0A0A; --term-bar:#111111;
+    --logo-tile:#FFFFFF; --logo-u:#000000; --logo-word:#FAFAFA;
     --sans:"Geist","Inter","Helvetica Neue",Arial,sans-serif;
     --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
     --maxw:1180px;
@@ -41,7 +42,7 @@
     overflow-x:hidden;
   }
   code,pre,kbd{font-variant-ligatures:none; font-feature-settings:"liga" 0,"calt" 0}
-  ::selection{background:rgba(45,212,191,.3); color:#fff}
+  ::selection{background:rgba(255,255,255,0.165); color:#fff}
   .wrap{max-width:var(--maxw); margin:0 auto; padding-inline:clamp(16px,4vw,32px); padding-block:0; position:relative}
   a{color:var(--teal-2); text-underline-offset:3px; text-decoration-thickness:1px}
   a:hover{color:#fff}
@@ -54,9 +55,9 @@
   .skip:focus{left:12px}
   .sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
 
-  .grad{background:linear-gradient(180deg,#fff 20%,#9AAAA6 110%); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .grad{background:linear-gradient(180deg,#fff 25%,#9A9A9A 115%); -webkit-background-clip:text; background-clip:text; color:transparent}
   h1 .grad-teal{display:block}
-  .grad-teal{background:linear-gradient(92deg,#5EEAD4 0%,#2DD4BF 45%,#A7F3D0 100%); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .grad-teal{background:linear-gradient(180deg,#FFFFFF 0%,#8C8C8C 130%); -webkit-background-clip:text; background-clip:text; color:transparent}
 
   .eyebrow{display:inline-flex; align-items:center; gap:10px; font-family:var(--mono); font-size:.72rem; font-weight:500;
     letter-spacing:.14em; text-transform:uppercase; color:var(--teal-2); margin:0 0 1.2rem}
@@ -70,7 +71,7 @@
   /* ---- nav ---- */
   header.nav{position:sticky; top:0; z-index:10; border-bottom:1px solid transparent;
     transition:background .25s ease,border-color .25s ease}
-  header.nav.scrolled{background:rgba(5,8,7,.72); border-bottom-color:var(--line);
+  header.nav.scrolled{background:rgba(0,0,0,.72); border-bottom-color:var(--line);
     -webkit-backdrop-filter:saturate(1.6) blur(14px); backdrop-filter:saturate(1.6) blur(14px)}
   .nav .wrap{display:flex; align-items:center; gap:1rem; height:64px}
   .brand{display:inline-flex; align-items:center; text-decoration:none; color:var(--ink)}
@@ -88,9 +89,9 @@
   .btn:hover{border-color:rgba(255,255,255,.24); background:rgba(255,255,255,.06); color:#fff}
   .btn svg{width:16px; height:16px; flex:none}
   .btn.sm{padding:8px 12px; font-size:.84rem; border-radius:9px}
-  .btn.primary{color:#032320; border-color:transparent;
-    background:linear-gradient(180deg,#6EF0DC,#2DD4BF); box-shadow:0 0 0 1px rgba(94,234,212,.4) inset,0 8px 30px -8px rgba(45,212,191,.55)}
-  .btn.primary:hover{color:#021714; background:linear-gradient(180deg,#8AF5E4,#3FE0CB)}
+  .btn.primary{color:#000; border-color:transparent;
+    background:#FFFFFF; box-shadow:0 0 0 1px rgba(255,255,255,0.24) inset,0 8px 30px -8px rgba(255,255,255,0.303)}
+  .btn.primary:hover{color:#000; background:#E6E6E6}
   .btn .arrow{transition:transform .2s ease}
   .btn:hover .arrow{transform:translateX(3px)}
   @media (max-width:880px){ nav.links{display:none} }
@@ -109,17 +110,17 @@
     mask-image:radial-gradient(ellipse 70% 60% at 50% 20%,#000 30%,transparent 75%)}
   .glow{position:absolute; pointer-events:none; border-radius:50%; filter:blur(80px)}
   .glow.a{width:780px; height:520px; left:50%; top:-240px; transform:translateX(-50%);
-    background:radial-gradient(closest-side,rgba(45,212,191,.28),rgba(14,110,110,.12) 60%,transparent)}
+    background:radial-gradient(closest-side,rgba(255,255,255,0.154),rgba(255,255,255,0.042) 60%,transparent)}
   .glow.b{width:520px; height:420px; left:50%; top:620px; transform:translateX(-10%);
-    background:radial-gradient(closest-side,rgba(45,212,191,.10),transparent)}
+    background:radial-gradient(closest-side,rgba(255,255,255,0.055),transparent)}
   .hero .inner{position:relative; text-align:center}
   .pill{display:inline-flex; align-items:center; gap:10px; max-width:100%; font-size:.84rem; font-weight:500;
     color:var(--ink-2); text-decoration:none; padding:5px 14px 5px 5px; border-radius:999px;
     background:rgba(255,255,255,.035); border:1px solid var(--line-2); margin-bottom:2rem;
-    box-shadow:0 0 30px -10px rgba(45,212,191,.4)}
-  .pill b{font-family:var(--mono); font-size:.66rem; font-weight:700; letter-spacing:.08em; color:#032320;
-    background:linear-gradient(180deg,#6EF0DC,#2DD4BF); border-radius:999px; padding:3px 9px}
-  .pill:hover{color:#fff; border-color:rgba(94,234,212,.4)}
+    box-shadow:0 0 30px -10px rgba(255,255,255,0.22)}
+  .pill b{font-family:var(--mono); font-size:.66rem; font-weight:700; letter-spacing:.08em; color:#000;
+    background:#FFFFFF; border-radius:999px; padding:3px 9px}
+  .pill:hover{color:#fff; border-color:rgba(255,255,255,0.24)}
   .pill svg{width:14px; height:14px; opacity:.7}
   @media (max-width:520px){ .pill .tail{display:none} }
   .hero h1{font-size:clamp(2.6rem,8.4vw,6rem); line-height:.98; font-weight:700; letter-spacing:-.055em;
@@ -127,10 +128,10 @@
   .hero .lede{margin:0 auto 2.4rem; font-size:clamp(1.05rem,2vw,1.25rem); max-width:58ch}
 
   .install{display:flex; align-items:stretch; max-width:520px; margin:0 auto; position:relative;
-    background:rgba(6,10,9,.9); border:1px solid var(--line-2); border-radius:12px; overflow:hidden;
+    background:rgba(10,10,10,.9); border:1px solid var(--line-2); border-radius:12px; overflow:hidden;
     box-shadow:0 0 0 1px rgba(0,0,0,.4),0 20px 50px -20px rgba(0,0,0,.8)}
   .install::after{content:""; position:absolute; inset:-1px; border-radius:12px; padding:1px; pointer-events:none;
-    background:linear-gradient(120deg,rgba(94,234,212,.55),transparent 35%,transparent 65%,rgba(94,234,212,.3));
+    background:linear-gradient(120deg,rgba(255,255,255,0.33),transparent 35%,transparent 65%,rgba(255,255,255,0.18));
     -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude}
   .install code{flex:1 1 auto; min-width:0; font-family:var(--mono); font-size:.92rem; color:var(--ink);
     padding:15px 18px; white-space:nowrap; overflow-x:auto; text-align:left}
@@ -140,7 +141,7 @@
     padding:0 16px; display:inline-flex; align-items:center; gap:7px; min-width:92px; justify-content:center}
   .copy:hover{color:#fff; background:rgba(255,255,255,.04)}
   .copy svg{width:15px; height:15px}
-  .copy[data-state="done"]{color:var(--green)}
+  .copy[data-state="done"]{color:#fff}
   @media (max-width:460px){ .install code{font-size:.8rem; padding:14px 12px} .copy{min-width:0; padding:0 12px} .copy span{display:none} }
   .pathnote{font-size:.84rem; color:var(--ink-3); margin:.9rem auto 2.2rem; max-width:560px}
   .pathnote code{font-family:var(--mono); font-size:.8rem; color:var(--ink-2); background:rgba(255,255,255,.04);
@@ -155,15 +156,15 @@
   /* ---- terminal ---- */
   .stage{position:relative; margin-top:clamp(3rem,7vw,4.5rem)}
   .stage::before{content:""; position:absolute; inset:8% 6% -4%; border-radius:40px; pointer-events:none;
-    background:radial-gradient(closest-side,rgba(45,212,191,.2),transparent); filter:blur(40px)}
+    background:radial-gradient(closest-side,rgba(255,255,255,0.11),transparent); filter:blur(40px)}
   .term{position:relative; background:var(--term-bg); border:1px solid var(--line-2); border-radius:var(--r); overflow:hidden; text-align:left;
     box-shadow:0 0 0 1px rgba(0,0,0,.5),0 50px 100px -30px rgba(0,0,0,.9),0 1px 0 rgba(255,255,255,.06) inset}
   .term::before{content:""; position:absolute; left:10%; right:10%; top:0; height:1px; pointer-events:none;
-    background:linear-gradient(90deg,transparent,rgba(94,234,212,.7),transparent)}
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.42),transparent)}
   .term-bar{display:flex; align-items:center; gap:14px; background:var(--term-bar);
     border-bottom:1px solid var(--line); padding:9px 12px; overflow-x:auto}
   .dots{display:flex; gap:7px; padding-left:4px; flex:none}
-  .dots i{width:11px; height:11px; border-radius:50%; background:#1D2826; display:block}
+  .dots i{width:11px; height:11px; border-radius:50%; background:#262626; display:block}
   .tabs{display:flex; gap:4px; flex:none}
   .tab{font-family:var(--mono); font-size:.74rem; cursor:pointer; white-space:nowrap;
     background:transparent; color:var(--ink-4); border:1px solid transparent; border-radius:7px; padding:5px 11px}
@@ -172,26 +173,26 @@
   .term-title{margin-left:auto; font-family:var(--mono); font-size:.7rem; color:var(--ink-4); white-space:nowrap; padding-right:6px}
   @media (max-width:640px){ .term-title{display:none} }
   .term-body{overflow-x:auto; padding:20px 22px 22px}
-  .term pre{margin:0; font-family:var(--mono); font-size:.78rem; line-height:1.75; white-space:pre; color:#CFDAD7}
+  .term pre{margin:0; font-family:var(--mono); font-size:.78rem; line-height:1.75; white-space:pre; color:#D4D4D4}
   .term .b{color:#fff; font-weight:700}
-  .term .s{color:#A3B2AE}
-  .term .d{color:#6B7B77}
+  .term .s{color:#A3A3A3}
+  .term .d{color:#6E6E6E}
   .term .vD{color:var(--violet); font-weight:700}
   .term .vI{color:var(--rose); font-weight:700}
   .term .vA{color:var(--amber); font-weight:700}
   .term .vB{color:var(--sky); font-weight:700}
   .term .vH{color:var(--green); font-weight:700}
-  .term .fix{color:var(--teal-2)}
+  .term .fix{color:#FFFFFF}
   .term .cmd{color:#fff}
-  .term .pr{color:var(--teal)}
+  .term .pr{color:#8A8A8A}
   .caption{font-size:.8rem; color:var(--ink-4); margin-top:14px; text-align:center}
   .player{position:relative; margin-top:2.6rem; border-radius:18px; overflow:hidden; border:1px solid var(--line-2); background:#000;
-    box-shadow:0 0 0 1px rgba(0,0,0,.6),0 60px 120px -40px rgba(0,0,0,.9),0 0 80px -30px rgba(45,212,191,.35)}
+    box-shadow:0 0 0 1px rgba(0,0,0,.6),0 60px 120px -40px rgba(0,0,0,.9),0 0 80px -30px rgba(255,255,255,0.193)}
   .player video{display:block; width:100%; height:auto; aspect-ratio:16/9; background:#000}
   .btn.soon{cursor:default; color:var(--ink-3); border-style:dashed}
   .btn.soon:hover{background:rgba(255,255,255,.03); border-color:var(--line-2); color:var(--ink-3)}
   .btn.soon em{font-style:normal; font-family:var(--mono); font-size:.66rem; letter-spacing:.06em; text-transform:uppercase;
-    color:var(--teal-2); border:1px solid rgba(94,234,212,.3); border-radius:999px; padding:2px 7px}
+    color:var(--teal-2); border:1px solid rgba(255,255,255,0.18); border-radius:999px; padding:2px 7px}
   /* line-by-line playback, added by script only when motion is welcome */
   .ln{display:inline}
   .armed .ln{opacity:0}
@@ -204,16 +205,16 @@
   .card{position:relative; background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.01));
     border:1px solid var(--line); border-radius:var(--r); padding:26px; overflow:hidden; isolation:isolate}
   .card::before{content:""; position:absolute; inset:0; z-index:-1; opacity:0; transition:opacity .3s ease;
-    background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(45,212,191,.10),transparent 60%)}
+    background:radial-gradient(420px circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,0.055),transparent 60%)}
   .card::after{content:""; position:absolute; inset:0; border-radius:inherit; padding:1px; pointer-events:none; opacity:0; transition:opacity .3s ease;
-    background:radial-gradient(300px circle at var(--mx,50%) var(--my,0%),rgba(94,234,212,.5),transparent 60%);
+    background:radial-gradient(300px circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,0.3),transparent 60%);
     -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude}
   .card:hover::before,.card:hover::after{opacity:1}
   .card h3{font-size:1.08rem; font-weight:600; letter-spacing:-.015em; margin-bottom:.5rem}
   .card p{color:var(--ink-3); font-size:.95rem; margin:0}
   .icon{width:40px; height:40px; border-radius:11px; display:grid; place-items:center; margin-bottom:1.1rem;
-    color:var(--teal-2); background:linear-gradient(180deg,rgba(45,212,191,.16),rgba(45,212,191,.04));
-    border:1px solid rgba(94,234,212,.22); box-shadow:0 0 24px -6px rgba(45,212,191,.35)}
+    color:var(--teal-2); background:linear-gradient(180deg,rgba(255,255,255,0.088),rgba(255,255,255,0.022));
+    border:1px solid rgba(255,255,255,0.132); box-shadow:0 0 24px -6px rgba(255,255,255,0.193)}
   .icon svg{width:19px; height:19px}
 
   /* ---- flow ---- */
@@ -239,12 +240,40 @@
   @media (max-width:960px){ .split{grid-template-columns:minmax(0,1fr)} }
   .lanes{display:grid; gap:12px; margin-top:2rem}
   .lane{display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:start; padding:18px 20px}
-  .lane .dot{width:10px; height:10px; border-radius:50%; margin-top:.45rem; background:var(--green); box-shadow:0 0 12px var(--green)}
-  .lane.todo .dot{background:var(--amber); box-shadow:0 0 12px var(--amber)}
-  .lane.safe .dot{background:var(--teal); box-shadow:0 0 12px var(--teal)}
+  .lane .dot{width:10px; height:10px; border-radius:50%; margin-top:.45rem; background:#fff; box-shadow:0 0 12px rgba(255,255,255,.6)}
+  .lane.todo .dot{background:transparent; border:2px solid #fff; box-shadow:none}
+  .lane.safe .dot{background:#8A8A8A; box-shadow:none}
   .lane h3{margin-bottom:.25rem}
   .badge{display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:.66rem; font-weight:700; letter-spacing:.08em;
-    color:var(--teal-2); border:1px solid rgba(94,234,212,.3); background:rgba(45,212,191,.08); border-radius:999px; padding:3px 10px; margin-bottom:1.2rem}
+    color:#000; background:#fff; border:1px solid #fff; border-radius:999px; padding:3px 10px; margin-bottom:1.2rem}
+
+
+  /* ---- fix section ---- */
+  .steps{list-style:none; margin:3rem 0 0; padding:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; counter-reset:none}
+  @media (max-width:860px){ .steps{grid-template-columns:minmax(0,1fr)} }
+  .steps li{padding:26px 26px 24px}
+  .step-n{display:block; font-family:var(--mono); font-size:.72rem; color:var(--ink-4); letter-spacing:.14em; margin-bottom:1.4rem}
+  .steps h3{font-size:1.5rem; font-weight:700; letter-spacing:-.03em; margin-bottom:.35rem}
+  .steps code{display:inline-block; font-family:var(--mono); font-size:.8rem; color:var(--ink); background:rgba(255,255,255,.05);
+    border:1px solid var(--line-2); border-radius:7px; padding:3px 9px; margin-bottom:.9rem}
+  .steps p{color:var(--ink-3); font-size:.95rem; margin:0}
+  .fix-grid{display:grid; grid-template-columns:minmax(0,7fr) minmax(0,5fr); gap:14px; margin-top:14px; align-items:start}
+  @media (max-width:1000px){ .fix-grid{grid-template-columns:minmax(0,1fr)} }
+  .fix-side{display:grid; gap:14px}
+  .diff{padding:0; overflow:hidden}
+  .diff-head{display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid var(--line);
+    font-family:var(--mono); font-size:.74rem; color:var(--ink-2)}
+  .diff-stat b{color:#fff; font-weight:700} .diff-stat i{font-style:normal; color:var(--ink-3)}
+  .diff-file{font-family:var(--mono); font-size:.72rem; color:var(--ink-3); padding:12px 18px 6px; border-top:1px solid var(--line)}
+  .diff-head + .diff-file{border-top:0}
+  .diff pre{margin:0; padding:2px 0 12px; font-family:var(--mono); font-size:.72rem; line-height:1.9; overflow-x:auto; white-space:pre}
+  .diff pre span{display:block; padding:0 18px}
+  .diff .dl{color:var(--ink-3); background:rgba(255,255,255,.025); text-decoration:line-through; text-decoration-color:rgba(255,255,255,.25)}
+  .diff .da{color:#fff; background:rgba(255,255,255,.07)}
+  .diff .dc{color:var(--ink-4)}
+  .diff-note{margin:0; padding:12px 18px 16px; border-top:1px solid var(--line); color:var(--ink-3); font-size:.84rem}
+  .rails{padding:24px}
+  .rails h3{margin-bottom:.2rem}
 
   /* ---- checks ---- */
   .bento{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:14px; margin-top:3rem}
@@ -253,12 +282,12 @@
   .ticks{list-style:none; padding:0; margin:1.1rem 0 0; display:grid; gap:.55rem}
   .ticks li{position:relative; padding-left:26px; color:var(--ink-2); font-size:.94rem}
   .ticks li::before{content:""; position:absolute; left:3px; top:.5em; width:10px; height:5px;
-    border-left:2px solid var(--teal); border-bottom:2px solid var(--teal); transform:rotate(-45deg)}
+    border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg)}
   .verdicts{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-top:1.1rem}
   .verdict{border:1px solid var(--line); border-radius:11px; padding:14px 16px; background:rgba(0,0,0,.25)}
   .verdict code{display:inline-block; font-family:var(--mono); font-size:.7rem; font-weight:700; letter-spacing:.06em; margin-bottom:.35rem}
   .verdict p{margin:0; font-size:.88rem; color:var(--ink-3)}
-  .kD{color:var(--violet)} .kI{color:var(--rose)} .kA{color:var(--amber)} .kB{color:var(--sky)} .kH{color:var(--green)}
+  .kD,.kI,.kA,.kB,.kH{color:var(--ink)}
 
   /* ---- rules ---- */
   .rules{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin-top:3rem}
@@ -275,12 +304,12 @@
     background:var(--term-bar); border-bottom:1px solid var(--line); padding-left:16px}
   .codeblock .head span.file{font-family:var(--mono); font-size:.74rem; color:var(--ink-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
   .codeblock .head .copy{padding:11px 16px}
-  .codeblock pre{margin:0; font-family:var(--mono); font-size:.8rem; line-height:1.75; padding:18px 20px; overflow-x:auto; color:#CFDAD7}
-  .codeblock .k{color:var(--teal-2)} .codeblock .c{color:#5F6E6A} .codeblock .v{color:var(--amber)}
+  .codeblock pre{margin:0; font-family:var(--mono); font-size:.8rem; line-height:1.75; padding:18px 20px; overflow-x:auto; color:#D4D4D4}
+  .codeblock .k{color:var(--teal-2)} .codeblock .c{color:#6B6B6B} .codeblock .v{color:#fff}
   .exits{display:grid; gap:10px}
   .exit{display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:start; padding:18px 20px}
   .exit b{font-family:var(--mono); font-size:1.6rem; line-height:1; font-weight:700; width:1.4ch}
-  .exit:nth-child(1) b{color:var(--green)} .exit:nth-child(2) b{color:var(--rose)} .exit:nth-child(3) b{color:var(--amber)}
+  .exit b{color:var(--ink)}
   .exit p{margin:0; color:var(--ink-2); font-size:.93rem}
   .note{font-size:.9rem; color:var(--ink-3); margin-top:1rem}
 
@@ -290,23 +319,23 @@
   .vision{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px}
   @media (max-width:960px){ .vision{grid-template-columns:repeat(2,minmax(0,1fr))} }
   @media (max-width:640px){ .vision{grid-template-columns:minmax(0,1fr)} }
-  .vision .idx{font-family:var(--mono); font-size:.62rem; font-weight:700; letter-spacing:.12em; color:var(--violet);
-    display:inline-block; margin-bottom:1rem; border:1px solid rgba(212,140,216,.3); border-radius:999px; padding:2px 9px}
-  .vision .card{background:linear-gradient(180deg,rgba(212,140,216,.035),rgba(255,255,255,.008))}
+  .vision .idx{font-family:var(--mono); font-size:.62rem; font-weight:700; letter-spacing:.12em; color:var(--ink-3);
+    display:inline-block; margin-bottom:1rem; border:1px solid var(--line-2); border-radius:999px; padding:2px 9px}
+  .vision .card{background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.005))}
   @media (max-width:960px){ .road{grid-template-columns:minmax(0,1fr)} }
   .road li{padding:22px}
   .road .top{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:.9rem}
   .road .top code{font-family:var(--mono); font-size:1.05rem; font-weight:700; color:#fff}
   .road .st{font-family:var(--mono); font-size:.62rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-4)}
-  .road .shipped .st{color:var(--green)}
-  .road .next{border-color:rgba(94,234,212,.35); box-shadow:0 0 40px -16px rgba(45,212,191,.5)}
+  .road .shipped .st,.road .next .st{color:#000; background:#fff; border-radius:999px; padding:2px 8px}
+  .road .next{border-color:rgba(255,255,255,0.21); box-shadow:0 0 40px -16px rgba(255,255,255,0.275)}
   .road .next .st{color:var(--teal-2)}
   .road p{font-size:.9rem}
 
   /* ---- closing ---- */
   .closing{overflow:hidden; text-align:center}
   .closing .glow{width:900px; height:500px; left:50%; bottom:-300px; transform:translateX(-50%);
-    background:radial-gradient(closest-side,rgba(45,212,191,.25),rgba(14,110,110,.1) 55%,transparent)}
+    background:radial-gradient(closest-side,rgba(255,255,255,0.138),rgba(255,255,255,0.035) 55%,transparent)}
   .closing h2{font-size:clamp(2.3rem,7vw,4.8rem); line-height:1; font-weight:700; letter-spacing:-.055em; margin-bottom:1.2rem; text-wrap:balance}
   .closing .install{margin-top:2.2rem}
 
@@ -331,8 +360,8 @@
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="logo" viewBox="0 0 249 64">
-    <path style="fill:var(--logo-tile,#0E6E6E)" d="M15 0H49A15 15 0 0 1 64 15V49A15 15 0 0 1 49 64H15A15 15 0 0 1 0 49V15A15 15 0 0 1 15 0Z"/>
-    <path style="fill:var(--logo-u,#fff)" d="M15 22H25V37A7 7 0 0 0 39 37V19L49 9V37A17 17 0 0 1 15 37Z"/>
+    <path style="fill:var(--logo-tile,#FFFFFF)" d="M15 0H49A15 15 0 0 1 64 15V49A15 15 0 0 1 49 64H15A15 15 0 0 1 0 49V15A15 15 0 0 1 15 0Z"/>
+    <path style="fill:var(--logo-u,#000)" d="M15 22H25V37A7 7 0 0 0 39 37V19L49 9V37A17 17 0 0 1 15 37Z"/>
     <path style="fill:var(--logo-word,#F2F6F5)" d="M90.62 46.27Q87.62 46.27 85.67 45.27Q83.72 44.27 82.57 42.72Q81.42 41.17 80.88 39.42Q80.33 37.67 80.16 36.11Q80 34.55 80 33.58V18.5H86.1V31.5Q86.1 32.75 86.28 34.31Q86.45 35.88 87.09 37.31Q87.72 38.75 88.99 39.67Q90.25 40.6 92.4 40.6Q93.55 40.6 94.67 40.23Q95.8 39.85 96.71 38.94Q97.62 38.02 98.17 36.42Q98.72 34.83 98.72 32.38L102.3 33.9Q102.3 37.35 100.96 40.15Q99.62 42.95 97.03 44.61Q94.42 46.27 90.62 46.27ZM99.45 45.5V37.12H98.72V18.5H104.78V45.5ZM123 46.25Q119.05 46.25 116.38 44.38Q113.7 42.5 112.35 39.26Q111 36.02 111 32Q111 27.93 112.35 24.7Q113.7 21.47 116.31 19.61Q118.93 17.75 122.78 17.75Q126.6 17.75 129.41 19.61Q132.23 21.47 133.78 24.69Q135.33 27.9 135.33 32Q135.33 36.05 133.8 39.27Q132.28 42.5 129.5 44.38Q126.73 46.25 123 46.25ZM109.98 57.5V18.5H115.3V37.45H116.05V57.5ZM122.08 40.85Q124.43 40.85 125.95 39.67Q127.48 38.5 128.21 36.49Q128.95 34.48 128.95 32Q128.95 29.55 128.2 27.54Q127.45 25.52 125.88 24.34Q124.3 23.15 121.88 23.15Q119.58 23.15 118.12 24.26Q116.68 25.38 115.99 27.36Q115.3 29.35 115.3 32Q115.3 34.62 115.99 36.62Q116.68 38.62 118.16 39.74Q119.65 40.85 122.08 40.85ZM139.02 45.5 139.07 9.5H145.17V31.5L155.05 18.5H162.57L152.1 32L163.47 45.5H155.5L145.17 32.5V45.5ZM176.5 46.25Q172.4 46.25 169.3 44.48Q166.2 42.7 164.46 39.55Q162.73 36.4 162.73 32.3Q162.73 27.88 164.43 24.61Q166.13 21.35 169.15 19.55Q172.18 17.75 176.15 17.75Q180.35 17.75 183.29 19.71Q186.23 21.67 187.65 25.25Q189.08 28.82 188.73 33.67H182.75V31.48Q182.73 27.07 181.2 25.05Q179.68 23.02 176.4 23.02Q172.7 23.02 170.9 25.31Q169.1 27.6 169.1 32Q169.1 36.1 170.9 38.35Q172.7 40.6 176.15 40.6Q178.38 40.6 179.99 39.61Q181.6 38.62 182.48 36.75L188.43 38.55Q186.88 42.2 183.64 44.23Q180.4 46.25 176.5 46.25ZM167.2 33.67V29.12H185.78V33.67ZM204.85 46.25Q200.75 46.25 197.65 44.48Q194.55 42.7 192.81 39.55Q191.08 36.4 191.08 32.3Q191.08 27.88 192.78 24.61Q194.48 21.35 197.5 19.55Q200.53 17.75 204.5 17.75Q208.7 17.75 211.64 19.71Q214.58 21.67 216 25.25Q217.43 28.82 217.08 33.67H211.1V31.48Q211.08 27.07 209.55 25.05Q208.03 23.02 204.75 23.02Q201.05 23.02 199.25 25.31Q197.45 27.6 197.45 32Q197.45 36.1 199.25 38.35Q201.05 40.6 204.5 40.6Q206.73 40.6 208.34 39.61Q209.95 38.62 210.83 36.75L216.78 38.55Q215.23 42.2 211.99 44.23Q208.75 46.25 204.85 46.25ZM195.55 33.67V29.12H214.13V33.67ZM233.9 46.25Q229.95 46.25 227.28 44.38Q224.6 42.5 223.25 39.26Q221.9 36.02 221.9 32Q221.9 27.93 223.25 24.7Q224.6 21.47 227.21 19.61Q229.83 17.75 233.68 17.75Q237.5 17.75 240.31 19.61Q243.12 21.47 244.68 24.69Q246.23 27.9 246.23 32Q246.23 36.05 244.7 39.27Q243.18 42.5 240.4 44.38Q237.62 46.25 233.9 46.25ZM220.88 57.5V18.5H226.2V37.45H226.95V57.5ZM232.98 40.85Q235.33 40.85 236.85 39.67Q238.38 38.5 239.11 36.49Q239.85 34.48 239.85 32Q239.85 29.55 239.1 27.54Q238.35 25.52 236.78 24.34Q235.2 23.15 232.78 23.15Q230.48 23.15 229.03 24.26Q227.58 25.38 226.89 27.36Q226.2 29.35 226.2 32Q226.2 34.62 226.89 36.62Q227.58 38.62 229.06 39.74Q230.55 40.85 232.98 40.85Z"/>
   </symbol>
   <symbol id="i-copy" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/></g></symbol>
@@ -369,7 +398,7 @@
   <div class="glow a" aria-hidden="true"></div>
   <div class="glow b" aria-hidden="true"></div>
   <div class="wrap inner">
-    <a class="pill" href="#fix"><b>NEW IN 0.2.0</b><span>upkeep fix<span class="tail"> &mdash; from diagnosis to treatment</span></span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    <a class="pill" href="#fix"><b>LIVE</b><span>upkeep 0.2.0<span class="tail"> &mdash; scan, fix and explain</span></span><svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
     <h1><span class="grad">Your dependencies are dying.</span> <span class="grad-teal">Know first. Fix fast.</span></h1>
     <p class="lede">
       upkeep is an open source CLI for Flutter and Dart. It finds the packages that are discontinued, incompatible
@@ -542,27 +571,26 @@
 
 <hr class="divider">
 
-<section class="sec" id="fix" aria-labelledby="fix-h">
+<section class="sec fixsec" id="fix" aria-labelledby="fix-h">
   <div class="wrap">
-    <div class="split">
-      <div class="reveal">
-        <span class="badge">NEW IN 0.2.0</span>
-        <p class="eyebrow">upkeep fix</p>
-        <h2 class="h2 grad" id="fix-h">From diagnosis to treatment, in one command.</h2>
-        <p class="lede">
-          Knowing a package is dead is half the job. <code class="i">upkeep fix</code> turns the scan into a plan: the
-          mechanical changes get made for you, and the rest becomes a checklist that points at the exact lines.
-        </p>
-        <div class="lanes">
-          <div class="card lane"><span class="dot" aria-hidden="true"></span><div><h3>Automatic</h3>
-            <p>Only changes that follow from published data: raising a Gradle wrapper to the version AGP requires, or removing a dead dependency nothing mentions. Dev dependencies and Flutter plugins are never removed.</p></div></div>
-          <div class="card lane todo"><span class="dot" aria-hidden="true"></span><div><h3>To do</h3>
-            <p>Anything that needs judgement, like moving off a package your code imports. You get every file and line that uses it.</p></div></div>
-          <div class="card lane safe"><span class="dot" aria-hidden="true"></span><div><h3>Verified, or undone</h3>
-            <p>Refuses files with uncommitted changes. After editing it runs <code class="i">pub get</code>; if that fails, everything is restored and it exits 2.</p></div></div>
-        </div>
-      </div>
+    <div class="center reveal">
+      <span class="badge">LIVE IN 0.2.0</span>
+      <p class="eyebrow">upkeep fix</p>
+      <h2 class="h2 grad" id="fix-h">From diagnosis to treatment.</h2>
+      <p class="lede">Knowing a package is dead is half the job. <code class="i">upkeep fix</code> makes the changes that
+        are safe to make, proves they work, and turns everything else into a checklist that points at the exact line.</p>
+    </div>
 
+    <ol class="steps" aria-label="How upkeep fix works">
+      <li class="card reveal"><span class="step-n">01</span><h3>Plan</h3><code>upkeep fix</code>
+        <p>Shows what it can change on its own and what needs you. Touches nothing.</p></li>
+      <li class="card reveal"><span class="step-n">02</span><h3>Apply</h3><code>upkeep fix --apply</code>
+        <p>Makes only the safe changes, and refuses to edit files with uncommitted work.</p></li>
+      <li class="card reveal"><span class="step-n">03</span><h3>Verify</h3><code>pub get</code>
+        <p>Runs the resolver on the result. If it fails, every file is put back and it exits 2.</p></li>
+    </ol>
+
+    <div class="fix-grid">
       <div class="reveal">
         <div class="term" data-tabs data-play>
           <div class="term-bar">
@@ -571,6 +599,7 @@
               <button class="tab" role="tab" id="tab-plan" aria-controls="out-plan" aria-selected="true" tabindex="0">upkeep fix</button>
               <button class="tab" role="tab" id="tab-apply" aria-controls="out-apply" aria-selected="false" tabindex="-1">--apply</button>
             </div>
+            <span class="term-title">~/code/my_app</span>
           </div>
           <div class="term-body">
 <pre id="out-plan" role="tabpanel" aria-labelledby="tab-plan" tabindex="0"><span class="pr">$</span> <span class="cmd">upkeep fix</span>
@@ -653,9 +682,34 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
 <span class="d">exit 1</span></pre>
           </div>
         </div>
-        <p class="caption">Real output on a real Flutter app with an outdated Gradle wrapper and an unused discontinued package. Exit code 1 while blocking to-dos remain.</p>
+      </div>
+
+      <div class="fix-side">
+        <div class="diff card reveal" aria-label="The change upkeep fix --apply made">
+          <div class="diff-head"><span>What --apply changed</span><span class="diff-stat"><b>+1</b> <i>−2</i></span></div>
+          <div class="diff-file">android/gradle/wrapper/gradle-wrapper.properties</div>
+          <pre><span class="dl">- distributionUrl=…/distributions/gradle-8.4-all.zip</span>
+<span class="da">+ distributionUrl=…/distributions/gradle-8.13-all.zip</span></pre>
+          <div class="diff-file">pubspec.yaml</div>
+          <pre><span class="dc">  dependencies:</span>
+<span class="dl">-   pedantic: ^1.11.1</span>
+<span class="dc">    telephony: ^0.2.0</span></pre>
+          <p class="diff-note">Nothing else in the project was touched. <code class="i">flutter pub get</code> resolved the result.</p>
+        </div>
+
+        <div class="card rails reveal">
+          <h3>It will not guess</h3>
+          <ul class="ticks">
+            <li>Only edits files that git can restore</li>
+            <li>Never removes a dev dependency or a Flutter plugin</li>
+            <li>Keeps anything a Dart file or config file mentions</li>
+            <li>Puts every file back if <code class="i">pub get</code> fails</li>
+            <li>Everything else becomes a to-do, with file and line</li>
+          </ul>
+        </div>
       </div>
     </div>
+    <p class="caption">Real output on a real Flutter app with an outdated Gradle wrapper and an unused discontinued package.</p>
   </div>
 </section>
 
@@ -665,7 +719,7 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
   <div class="wrap">
     <div class="split">
       <div class="reveal">
-        <span class="badge">NEW IN 0.2.0</span>
+        <span class="badge">LIVE IN 0.2.0</span>
         <p class="eyebrow">upkeep explain</p>
         <h2 class="h2 grad" id="explain-h">Disagree with a verdict? Check the evidence.</h2>
         <p class="lede">
@@ -795,7 +849,7 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
 <section class="sec" id="ci" aria-labelledby="ci-h">
   <div class="wrap">
     <div class="reveal">
-      <span class="badge">NEW IN 0.2.0</span>
+      <span class="badge">LIVE IN 0.2.0</span>
       <p class="eyebrow">GitHub Action</p>
       <h2 class="h2 grad" id="ci-h">It opens the fix pull request for you.</h2>
       <p class="lede">One workflow file. Every pull request gets a health check in its job summary, and once a week upkeep
@@ -863,13 +917,13 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
     <ol class="road shipped-row">
       <li class="card shipped reveal"><div class="top"><code>scan</code><span class="st">Live</span></div>
         <p>Verdicts with reasons, the Android build matrix, CI exit codes. On pub.dev since 0.1.</p></li>
-      <li class="card next reveal"><div class="top"><code>fix</code><span class="st">New</span></div>
+      <li class="card next reveal"><div class="top"><code>fix</code><span class="st">Live</span></div>
         <p>Automatic, reversible fixes, pubspec changes verified by <code class="i">pub get</code>, and a to-do list with file and line.</p></li>
-      <li class="card next reveal"><div class="top"><code>explain</code><span class="st">New</span></div>
+      <li class="card next reveal"><div class="top"><code>explain</code><span class="st">Live</span></div>
         <p>Every fact behind a verdict, where your code uses the package, and a successor with its source.</p></li>
-      <li class="card next reveal"><div class="top"><code>json</code><span class="st">New</span></div>
+      <li class="card next reveal"><div class="top"><code>json</code><span class="st">Live</span></div>
         <p>A versioned report for tools, and Markdown for job summaries.</p></li>
-      <li class="card next reveal"><div class="top"><code>action</code><span class="st">New</span></div>
+      <li class="card next reveal"><div class="top"><code>action</code><span class="st">Live</span></div>
         <p>A GitHub Action that scans every pull request and opens the fix pull request itself.</p></li>
     </ol>
 
