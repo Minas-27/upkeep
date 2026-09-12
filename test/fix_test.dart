@@ -50,11 +50,10 @@ String project(Map<String, String> files) {
 }
 
 FixPlan planFor(String root, List<DependencyReport> deps) => const FixPlanner().plan(
-      projectRoot: root,
       dependencies: deps,
       android: const [],
       androidConfig: null,
-      references: ReferenceIndex.scan(root, deps.map((d) => d.name)),
+      references: scanReferences(root, deps.map((d) => d.name)),
     );
 
 Future<ProcessResult> resolves(String root, {required bool flutter}) async =>
@@ -74,7 +73,7 @@ void main() {
       });
 
       final index =
-          ReferenceIndex.scan(root, ['foo', 'bar', 'baz', 'flutter_launcher_icons', 'qux']);
+          scanReferences(root, ['foo', 'bar', 'baz', 'flutter_launcher_icons', 'qux']);
 
       expect(index.dartReferencesTo('foo').map((r) => '$r'), ['lib/a.dart:1', 'lib/a.dart:3']);
       // A mention in a comment still counts. A false "still used" costs a
@@ -131,26 +130,32 @@ void main() {
     });
 
     test('leaves a checksum-pinned Gradle wrapper to Gradle itself', () {
-      final root = project({
+      final config = AndroidConfig.fromFiles({
         RaiseGradleWrapper.gradleWrapperPath:
             'distributionUrl=https\\://services.gradle.org/distributions/gradle-8.4-all.zip\n'
                 'distributionSha256Sum=abc\n',
-      });
+        'android/settings.gradle': "plugins { id 'com.android.application' version '8.9.0' apply false }",
+      }, jdkVersion: 17, jdkSource: 'test');
       final plan = const FixPlanner().plan(
-        projectRoot: root,
         dependencies: const [],
-        android: const AndroidMatrixChecker().check(const AndroidConfig(
-          agpVersion: '8.9.0',
-          gradleVersion: '8.4',
-          jdkVersion: 17,
-          jdkSource: 'test',
-        )),
-        androidConfig: const AndroidConfig(agpVersion: '8.9.0', gradleVersion: '8.4'),
-        references: ReferenceIndex.scan(root, const []),
+        android: const AndroidMatrixChecker().check(config),
+        androidConfig: config,
+        references: const ReferenceIndex.unknown(),
       );
 
       expect(plan.automatic, isEmpty);
       expect(plan.todos.single.action, contains('--gradle-version=8.11.1'));
+    });
+
+    test('never removes anything when the project code was not read', () {
+      final plan = const FixPlanner().plan(
+        dependencies: [dep('gone')],
+        android: const [],
+        androidConfig: null,
+        references: const ReferenceIndex.unknown(),
+      );
+      expect(plan.automatic, isEmpty);
+      expect(plan.todos.single.isBlocking, isTrue);
     });
   });
 

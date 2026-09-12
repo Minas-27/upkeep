@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
 
@@ -60,20 +57,14 @@ class Pubspec {
   /// True when the project depends on the Flutter SDK.
   final bool isFlutterProject;
 
-  /// Reads and parses `pubspec.yaml` from [projectRoot].
+  /// Parses the text of a `pubspec.yaml`.
   ///
-  /// Throws [PubspecException] when the file is missing or unusable, because a
-  /// project without a readable pubspec is not a project `upkeep` can report on.
-  static Pubspec load(String projectRoot) {
-    final file = File(p.join(projectRoot, 'pubspec.yaml'));
-    if (!file.existsSync()) {
-      throw const PubspecException(
-          'No pubspec.yaml here. Run upkeep from a Dart or Flutter project directory.');
-    }
-
+  /// Throws [PubspecException] when it is unusable, because a project without a
+  /// readable pubspec is not a project `upkeep` can report on.
+  static Pubspec parse(String text) {
     final Object? parsed;
     try {
-      parsed = loadYaml(file.readAsStringSync());
+      parsed = loadYaml(text);
     } on YamlException catch (e) {
       throw PubspecException('pubspec.yaml is not valid YAML: ${e.message}');
     }

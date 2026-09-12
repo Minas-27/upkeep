@@ -7,12 +7,13 @@ dependencies are dying, and whether the Android build matrix actually works.
 
 ```bash
 dart analyze          # must be clean
-dart test             # 49 tests
+dart test             # 51 tests
 dart run bin/upkeep.dart scan --no-color --path <dir>
 dart run bin/upkeep.dart fix --no-color --path <dir>   # add --apply to edit
 dart run bin/upkeep.dart explain <package> --no-color
 # any command takes --format json|markdown
 dart pub publish --dry-run   # must be 0 warnings before any release
+tool/build_web.sh     # rebuild site/app/engine.js after any change under lib/
 ```
 
 ## Layout
@@ -30,7 +31,11 @@ dart pub publish --dry-run   # must be 0 warnings before any release
 | `lib/src/data/replacements.dart` | the curated successor map; every entry cites a primary source |
 | `lib/src/report/` | rendering, and nothing else: terminal, JSON (schema v1), Markdown |
 | `action.yml`, `action/` | the GitHub Action; `run.sh` holds the logic so it can be tested locally |
+| `lib/src/engine.dart` | `analyzeProject`: the one analysis both the CLI and the web app call |
+| `lib/src/project/loader.dart` | the only file-system code in `project/`; parsing lives in `dart:io`-free files |
+| `web/engine.dart` | the engine compiled to JavaScript for the web app; build with `tool/build_web.sh` |
 | `site/index.html` | the landing page |
+| `site/app/` | the web app: reads GitHub or a paste, runs `engine.js` in the browser, no backend |
 
 ## The rules this codebase holds to
 
@@ -102,12 +107,16 @@ All public, no auth.
 
 ## Releasing
 
-1. Bump `pubspec.yaml` **and** `upkeepVersion` in `lib/src/cli/runner.dart`.
+1. Bump `pubspec.yaml` **and** `upkeepVersion` in `lib/src/version.dart`.
    They must match.
 2. Add a CHANGELOG entry.
-3. `dart analyze && dart test && dart pub publish --dry-run` — clean, 49 passing,
+3. `dart analyze && dart test && dart pub publish --dry-run` — clean, 51 passing,
    0 warnings.
 4. Commit, then `dart pub publish`, then push.
 
-`.pubignore` keeps `site/`, the Action, the planning files and the handoff out of
+Nothing under `lib/src/` except `cli/`, `fix/apply.dart`, `project/loader.dart`,
+`pub/cache.dart` and the terminal reports may import `dart:io`, or the web build
+breaks. `tool/build_web.sh` is the check.
+
+`.pubignore` keeps `site/`, `web/`, `tool/`, the Action, the planning files and the handoff out of
 the published archive. Check it still does after adding any top-level file.

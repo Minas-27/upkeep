@@ -1,4 +1,4 @@
-import '../fix/apply.dart';
+import '../fix/result.dart';
 import '../fix/plan.dart';
 import '../rules/android_matrix.dart';
 import '../rules/dependency_health.dart';

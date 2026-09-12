@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>upkeep — check any Flutter project</title>
+<meta name="description" content="Paste a GitHub repository or a pubspec.yaml and see which dependencies are dying, whether the Android build matrix builds, and what to fix. Runs entirely in your browser.">
+<meta property="og:title" content="upkeep — check any Flutter project">
+<meta property="og:description" content="Dying dependencies, broken Android build matrices, and the exact fix. Runs in your browser.">
+<meta property="og:image" content="../brand/logo-1200x630.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#050807">
+<meta name="color-scheme" content="dark">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath fill='%230E6E6E' d='M15 0H49A15 15 0 0 1 64 15V49A15 15 0 0 1 49 64H15A15 15 0 0 1 0 49V15A15 15 0 0 1 15 0Z'/%3E%3Cpath fill='%23fff' d='M15 22H25V37A7 7 0 0 0 39 37V19L49 9V37A17 17 0 0 1 15 37Z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="app.css">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-gh" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/></g></symbol>
+  <symbol id="i-arrow" viewBox="0 0 16 16"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M3 8h10M9 4l4 4-4 4"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5 7V5a3 3 0 0 1 6 0v2"/></g></symbol>
+  <symbol id="i-link" viewBox="0 0 16 16"><path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M7 9a3 3 0 0 0 4.2.2l2-2a3 3 0 0 0-4.2-4.2l-.8.8M9 7a3 3 0 0 0-4.2-.2l-2 2A3 3 0 0 0 7 13l.8-.8"/></symbol>
+  <symbol id="i-down" viewBox="0 0 16 16"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M4 6l4 4 4-4"/></symbol>
+  <symbol id="logo-mark" viewBox="0 0 64 64"><path fill="#0E6E6E" d="M15 0H49A15 15 0 0 1 64 15V49A15 15 0 0 1 49 64H15A15 15 0 0 1 0 49V15A15 15 0 0 1 15 0Z"/><path fill="#fff" d="M15 22H25V37A7 7 0 0 0 39 37V19L49 9V37A17 17 0 0 1 15 37Z"/></symbol>
+</svg>
+
+<header class="bar">
+  <div class="wrap bar-in">
+    <a class="brand" href="../" aria-label="upkeep home">
+      <svg class="mark" aria-hidden="true"><use href="#logo-mark"/></svg>
+      <span class="word">upkeep</span>
+      <span class="app-tag">web</span>
+    </a>
+    <span class="spacer"></span>
+    <a class="ghost" href="../#ci">GitHub Action</a>
+    <a class="ghost" href="https://pub.dev/packages/upkeep">CLI</a>
+    <a class="btn sm" href="https://github.com/Minas-27/upkeep"><svg aria-hidden="true"><use href="#i-gh"/></svg><span class="hide-sm">Source</span></a>
+  </div>
+</header>
+
+<main id="main">
+  <section class="intro" id="intro">
+    <div class="glow" aria-hidden="true"></div>
+    <div class="wrap">
+      <h1><span class="grad">Check any Flutter project.</span> <span class="grad-teal">In your browser.</span></h1>
+      <p class="lede">Dying dependencies, a broken Android build matrix, and exactly what to fix. The same engine as the
+        <code>upkeep</code> CLI, running on this page.</p>
+
+      <form class="console" id="form" autocomplete="off">
+        <div class="modes" role="tablist" aria-label="Input">
+          <button type="button" class="mode" role="tab" id="mode-repo" aria-selected="true" aria-controls="panel-repo">GitHub repository</button>
+          <button type="button" class="mode" role="tab" id="mode-paste" aria-selected="false" aria-controls="panel-paste" tabindex="-1">Paste pubspec</button>
+        </div>
+
+        <div id="panel-repo" role="tabpanel" aria-labelledby="mode-repo">
+          <div class="field-row">
+            <label class="field grow">
+              <span class="sr">Repository</span>
+              <svg class="lead" aria-hidden="true"><use href="#i-gh"/></svg>
+              <input id="repo" name="repo" placeholder="owner/repo or https://github.com/owner/repo" spellcheck="false">
+            </label>
+            <button class="btn primary run" type="submit" id="run">Check <svg class="arrow" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          </div>
+          <div class="examples">
+            <span>Try</span>
+            <button type="button" class="chip" data-example="flutter/samples/compass_app/app">flutter/samples · compass_app</button>
+            <button type="button" class="chip" data-example="Minas-27/upkeep/tree/action-test/.github/action-fixture">upkeep test fixture</button>
+          </div>
+        </div>
+
+        <div id="panel-paste" role="tabpanel" aria-labelledby="mode-paste" hidden>
+          <div class="paste-grid">
+            <label class="area">
+              <span class="area-label">pubspec.yaml <em>required</em></span>
+              <textarea id="pubspec" spellcheck="false" placeholder="name: my_app&#10;dependencies:&#10;  http: ^1.2.0"></textarea>
+            </label>
+            <label class="area">
+              <span class="area-label">pubspec.lock <em>optional, shows resolved versions</em></span>
+              <textarea id="lock" spellcheck="false" placeholder="packages:&#10;  http:&#10;    version: &quot;1.2.2&quot;"></textarea>
+            </label>
+          </div>
+          <div class="field-row end">
+            <button class="btn primary run" type="submit">Check <svg class="arrow" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          </div>
+        </div>
+
+        <div class="console-foot">
+          <label class="dart">
+            <span>Judge against Dart</span>
+            <input id="dart" value="" inputmode="decimal" spellcheck="false" aria-describedby="dart-note">
+          </label>
+          <span class="note" id="dart-note">Defaults to the latest stable. Set it to the Dart your Flutter ships.</span>
+          <span class="spacer"></span>
+          <span class="privacy"><svg aria-hidden="true"><use href="#i-lock"/></svg>Runs in your browser. Nothing is sent to us.</span>
+        </div>
+      </form>
+
+      <ol class="progress" id="progress" hidden aria-live="polite"></ol>
+      <div class="error" id="error" role="alert" hidden></div>
+    </div>
+  </section>
+
+  <section class="results" id="results" hidden>
+    <div class="wrap">
+      <div class="project-head">
+        <div>
+          <p class="eyebrow" id="r-source"></p>
+          <h2 id="r-name"></h2>
+          <p class="meta" id="r-meta"></p>
+        </div>
+        <div class="head-actions">
+          <button class="btn sm" type="button" id="share"><svg aria-hidden="true"><use href="#i-link"/></svg><span>Copy link</span></button>
+          <button class="btn sm" type="button" id="copy-md"><svg aria-hidden="true"><use href="#i-copy"/></svg><span>Copy report</span></button>
+        </div>
+      </div>
+
+      <div class="summary" id="summary"></div>
+
+      <div class="tabs" role="tablist" aria-label="Report">
+        <button class="tab" role="tab" id="t-deps" aria-controls="p-deps" aria-selected="true">Dependencies <b id="c-deps"></b></button>
+        <button class="tab" role="tab" id="t-android" aria-controls="p-android" aria-selected="false" tabindex="-1">Android build <b id="c-android"></b></button>
+        <button class="tab" role="tab" id="t-fix" aria-controls="p-fix" aria-selected="false" tabindex="-1">Fix plan <b id="c-fix"></b></button>
+        <button class="tab" role="tab" id="t-ci" aria-controls="p-ci" aria-selected="false" tabindex="-1">Keep it healthy</button>
+      </div>
+
+      <div id="p-deps" role="tabpanel" aria-labelledby="t-deps">
+        <div class="filters" id="filters"></div>
+        <div class="deps" id="deps"></div>
+      </div>
+      <div id="p-android" role="tabpanel" aria-labelledby="t-android" hidden></div>
+      <div id="p-fix" role="tabpanel" aria-labelledby="t-fix" hidden></div>
+      <div id="p-ci" role="tabpanel" aria-labelledby="t-ci" hidden></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <span>upkeep <span id="engine-version"></span> · MIT licensed · Built by <a href="https://abroid.dev">Abraham Addisu</a></span>
+    <span class="spacer"></span>
+    <a href="../">Home</a><a href="https://github.com/Minas-27/upkeep/issues">Report an issue</a>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="engine.js"></script>
+<script src="app.js"></script>

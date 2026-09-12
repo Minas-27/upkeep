@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
 /// The resolved versions recorded in `pubspec.lock`.
@@ -18,15 +15,12 @@ class Lockfile {
   /// True when nothing was resolved.
   bool get isEmpty => _versions.isEmpty;
 
-  /// Reads `pubspec.lock` from [projectRoot], returning an empty lockfile when
-  /// it is absent or unreadable.
-  static Lockfile load(String projectRoot) {
-    final file = File(p.join(projectRoot, 'pubspec.lock'));
-    if (!file.existsSync()) return const Lockfile({});
-
+  /// Parses the text of a `pubspec.lock`, returning an empty lockfile when it
+  /// is unreadable.
+  static Lockfile parse(String text) {
     final Object? parsed;
     try {
-      parsed = loadYaml(file.readAsStringSync());
+      parsed = loadYaml(text);
     } on YamlException {
       return const Lockfile({});
     }

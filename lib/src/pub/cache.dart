@@ -3,11 +3,13 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
+import 'client.dart';
+
 /// An on-disk cache of pub.dev responses.
 ///
 /// A second `upkeep scan` inside the TTL does no network work at all, which
 /// matters because this tool is meant to run in CI and on slow connections.
-class ResponseCache {
+class ResponseCache implements PubResponseCache {
   ResponseCache({Directory? directory, this.ttl = const Duration(hours: 24)})
       : _dir =
             directory ?? Directory(p.join(_home ?? Directory.systemTemp.path, '.upkeep', 'cache'));
@@ -22,6 +24,7 @@ class ResponseCache {
   static String _safe(String key) => key.replaceAll(RegExp(r'[^A-Za-z0-9._-]'), '_');
 
   /// The cached value for [key], or null when absent, expired or corrupt.
+  @override
   Map<String, dynamic>? read(String key) {
     final file = _fileFor(key);
     if (!file.existsSync()) return null;
@@ -40,6 +43,7 @@ class ResponseCache {
   }
 
   /// Stores [body] under [key]. Cache failures are never fatal.
+  @override
   void write(String key, Map<String, dynamic> body) {
     try {
       _dir.createSync(recursive: true);

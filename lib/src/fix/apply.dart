@@ -4,6 +4,9 @@ import 'package:path/path.dart' as p;
 import 'package:yaml_edit/yaml_edit.dart';
 
 import 'plan.dart';
+import 'result.dart';
+
+export 'result.dart';
 
 /// Runs `pub get` for the project at [root] and reports whether it resolved.
 typedef PubGetRunner = Future<ProcessResult> Function(String root, {required bool flutter});
@@ -15,33 +18,6 @@ Future<ProcessResult> runPubGet(String root, {required bool flutter}) => Process
       workingDirectory: root,
       runInShell: Platform.isWindows,
     );
-
-/// Why `upkeep fix --apply` declined to touch anything.
-class ApplyRefused implements Exception {
-  const ApplyRefused(this.message, {this.hint});
-  final String message;
-  final String? hint;
-}
-
-/// What happened when a plan was applied.
-class ApplyResult {
-  const ApplyResult({
-    required this.applied,
-    this.verifiedWith,
-    this.revertedBecause,
-  });
-
-  /// The changes that were made and kept.
-  final List<AutomaticFix> applied;
-
-  /// The command that confirmed the new pubspec resolves, when one ran.
-  final String? verifiedWith;
-
-  /// Set when `pub get` did not succeed and every file was restored.
-  final String? revertedBecause;
-
-  bool get wasReverted => revertedBecause != null;
-}
 
 /// Applies the automatic part of a [FixPlan].
 ///

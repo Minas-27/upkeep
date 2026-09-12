@@ -1,7 +1,3 @@
-import 'dart:io';
-
-import 'package:path/path.dart' as p;
-
 import '../project/android.dart';
 import '../project/references.dart';
 import '../rules/android_matrix.dart';
@@ -112,7 +108,6 @@ class FixPlanner {
   const FixPlanner();
 
   FixPlan plan({
-    required String projectRoot,
     required List<DependencyReport> dependencies,
     required List<MatrixFinding> android,
     required AndroidConfig? androidConfig,
@@ -123,7 +118,7 @@ class FixPlanner {
 
     for (final finding in android) {
       if (finding.level != FindingLevel.fail && finding.level != FindingLevel.warn) continue;
-      _planAndroid(projectRoot, finding, androidConfig, automatic, todos);
+      _planAndroid(finding, androidConfig, automatic, todos);
     }
 
     for (final dep in dependencies) {
@@ -203,7 +198,6 @@ class FixPlanner {
       !index.isReferenced(dep.name);
 
   void _planAndroid(
-    String projectRoot,
     MatrixFinding finding,
     AndroidConfig? config,
     List<AutomaticFix> automatic,
@@ -216,13 +210,10 @@ class FixPlanner {
         finding.level == FindingLevel.fail &&
         required != null &&
         current != null) {
-      final wrapper = File(p.join(projectRoot, RaiseGradleWrapper.gradleWrapperPath));
-      final text = wrapper.existsSync() ? wrapper.readAsStringSync() : '';
-
       // A pinned checksum belongs to the old distribution. Editing the URL
       // without it would break the wrapper, and inventing a checksum would be
       // worse, so the Gradle tool gets to do this one.
-      if (text.contains('distributionSha256Sum')) {
+      if (config?.wrapperPinsChecksum ?? false) {
         todos.add(FixTodo(
           title: 'Raise the Gradle wrapper to $required',
           reasons: [

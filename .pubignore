@@ -5,3 +5,5 @@ CLAUDE.md
 HANDOFF.md
 action.yml
 action/
+web/
+tool/

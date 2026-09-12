@@ -127,11 +127,11 @@ class AndroidMatrixChecker {
   MatrixFinding _jdkFinding(AndroidConfig config, AgpRequirement required, String agp) {
     final jdk = config.jdkVersion;
     if (jdk == null) {
-      return const MatrixFinding(
+      return MatrixFinding(
         level: FindingLevel.unchecked,
         check: MatrixCheck.jdk,
         title: 'JDK version not detected',
-        detail: 'Could not run `java -version`.',
+        detail: config.jdkUnavailableReason ?? 'No JDK version was available to check.',
       );
     }
 

@@ -4,7 +4,25 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:pub_semver/pub_semver.dart';
 
-import 'cache.dart';
+/// Stores pub.dev responses between lookups.
+///
+/// The command line keeps them on disk for 24 hours; a browser keeps them in
+/// memory for the page's life.
+abstract interface class PubResponseCache {
+  Map<String, dynamic>? read(String key);
+  void write(String key, Map<String, dynamic> body);
+}
+
+/// Keeps responses for as long as the process or page lives.
+class MemoryPubCache implements PubResponseCache {
+  final _entries = <String, Map<String, dynamic>>{};
+
+  @override
+  Map<String, dynamic>? read(String key) => _entries[key];
+
+  @override
+  void write(String key, Map<String, dynamic> body) => _entries[key] = body;
+}
 
 /// What pub.dev knows about one package.
 class PackageInfo {
@@ -99,12 +117,12 @@ class PackageInfo {
 
 /// Reads package facts from the public pub.dev API.
 class PubClient {
-  PubClient({http.Client? httpClient, ResponseCache? cache, this.concurrency = 8})
+  PubClient({http.Client? httpClient, PubResponseCache? cache, this.concurrency = 8})
       : _http = httpClient ?? http.Client(),
-        _cache = cache ?? ResponseCache();
+        _cache = cache ?? MemoryPubCache();
 
   final http.Client _http;
-  final ResponseCache _cache;
+  final PubResponseCache _cache;
 
   /// How many packages to look up at once. Deliberately modest: this hits a
   /// free public API that owes us nothing.

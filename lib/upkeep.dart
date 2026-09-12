@@ -5,12 +5,15 @@
 library;
 
 export 'src/cli/runner.dart'
-    show runScan, runFix, runExplain, upkeepVersion, ExitCodes, OutputFormat, currentDartVersion;
+    show runScan, runFix, runExplain, ExitCodes, OutputFormat, currentDartVersion;
+export 'src/version.dart';
 export 'src/data/replacements.dart';
 export 'src/fix/apply.dart';
 export 'src/fix/plan.dart';
 export 'src/data/agp_matrix.dart';
+export 'src/engine.dart';
 export 'src/project/android.dart';
+export 'src/project/loader.dart';
 export 'src/project/lockfile.dart';
 export 'src/project/pubspec.dart';
 export 'src/project/references.dart';

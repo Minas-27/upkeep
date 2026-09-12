@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:pub_semver/pub_semver.dart';
 
+import '../engine.dart';
+import '../version.dart';
 import '../fix/apply.dart';
 import '../fix/plan.dart';
-import '../project/android.dart';
+import '../project/loader.dart';
 import '../project/lockfile.dart';
 import '../project/pubspec.dart';
 import '../project/references.dart';
@@ -17,10 +19,7 @@ import '../report/markdown_report.dart';
 import '../report/terminal.dart';
 import '../rules/android_matrix.dart';
 import '../rules/dependency_health.dart';
-import '../rules/replacements.dart';
 
-/// The published version of this tool.
-const String upkeepVersion = '0.1.2';
 
 /// Process exit codes. CI depends on these, so they are part of the contract.
 abstract final class ExitCodes {
@@ -47,40 +46,10 @@ enum OutputFormat {
   markdown,
 }
 
-/// Everything a scan learned, shared by every command so they can never
-/// disagree about a verdict.
-class _Analysis {
-  const _Analysis({
-    required this.pubspec,
-    required this.dependencies,
-    required this.skipped,
-    required this.android,
-    required this.androidFindings,
-  });
-
-  final Pubspec pubspec;
-  final List<DependencyReport> dependencies;
-  final int skipped;
-  final AndroidConfig? android;
-  final List<MatrixFinding> androidFindings;
-}
-
 PubClient _client(bool useCache) {
   final cache = ResponseCache();
   if (!useCache) cache.clear();
   return PubClient(cache: cache);
-}
-
-/// Looks up and attaches curated successors for [reports].
-Future<List<DependencyReport>> _withSuccessors(
-  List<DependencyReport> reports,
-  PubClient pub,
-  HealthEngine engine,
-) async {
-  const curated = CuratedReplacements();
-  final wanted = curated.candidates(reports);
-  if (wanted.isEmpty) return reports;
-  return curated.attach(reports, await pub.fetchAll(wanted), engine);
 }
 
 /// Writes a failure in the format the caller asked for.
@@ -101,7 +70,7 @@ void _fail(StringSink sink, Style style, OutputFormat format, String command, St
   }
 }
 
-Future<_Analysis?> _analyze({
+Future<ProjectAnalysis?> _analyze({
   required String projectPath,
   required bool useCache,
   required Style style,
@@ -112,40 +81,24 @@ Future<_Analysis?> _analyze({
 }) async {
   final Pubspec pubspec;
   try {
-    pubspec = Pubspec.load(projectPath);
+    pubspec = loadPubspec(projectPath);
   } on PubspecException catch (e) {
     _fail(sink, style, format, command, e.message);
     return null;
   }
 
-  final lock = Lockfile.load(projectPath);
-  final android = AndroidConfig.load(projectPath);
-
-  final hosted =
-      pubspec.dependencies.where((d) => d.source == DepSource.hosted).map((d) => d.name).toList();
-
   final pub = client ?? _client(useCache);
-  final engine = HealthEngine(dartSdkVersion: currentDartVersion());
-  final List<DependencyReport> dependencies;
   try {
-    final lookups = await pub.fetchAll(hosted);
-    dependencies = await _withSuccessors(
-      engine.evaluate(pubspec.dependencies, lookups, lock.versionOf),
-      pub,
-      engine,
+    return await analyzeProject(
+      pubspec: pubspec,
+      lockfile: loadLockfile(projectPath),
+      android: loadAndroidConfig(projectPath),
+      pub: pub,
+      dartVersion: currentDartVersion(),
     );
   } finally {
     if (client == null) pub.close();
   }
-
-  return _Analysis(
-    pubspec: pubspec,
-    dependencies: dependencies,
-    skipped: pubspec.dependencies.length - hosted.length,
-    android: android,
-    androidFindings:
-        android == null ? const <MatrixFinding>[] : const AndroidMatrixChecker().check(android),
-  );
 }
 
 /// Runs `upkeep scan` and returns the process exit code.
@@ -249,11 +202,10 @@ Future<int> runFix({
   if (analysis == null) return ExitCodes.error;
 
   final plan = const FixPlanner().plan(
-    projectRoot: projectPath,
     dependencies: analysis.dependencies,
     android: analysis.androidFindings,
     androidConfig: analysis.android,
-    references: ReferenceIndex.scan(
+    references: scanReferences(
       projectPath,
       analysis.dependencies.map((d) => d.name),
     ),
@@ -338,7 +290,7 @@ Future<int> runExplain({
 
   Pubspec? pubspec;
   try {
-    pubspec = Pubspec.load(projectPath);
+    pubspec = loadPubspec(projectPath);
   } on PubspecException {
     pubspec = null;
   }
@@ -355,7 +307,7 @@ Future<int> runExplain({
 
   final dependency =
       declared ?? DeclaredDependency(name: package, source: DepSource.hosted, isDev: false);
-  final lock = pubspec == null ? const Lockfile({}) : Lockfile.load(projectPath);
+  final lock = pubspec == null ? const Lockfile({}) : loadLockfile(projectPath);
 
   final pub = client ?? _client(useCache);
   final engine = HealthEngine(dartSdkVersion: currentDartVersion());
@@ -364,14 +316,14 @@ Future<int> runExplain({
   try {
     lookup = await pub.fetch(package);
     report = engine.evaluate([dependency], {package: lookup}, lock.versionOf).single;
-    report = (await _withSuccessors([report], pub, engine)).single;
+    report = (await attachSuccessors([report], pub, engine)).single;
   } finally {
     if (client == null) pub.close();
   }
 
   final references = declared == null
       ? const <Reference>[]
-      : ReferenceIndex.scan(projectPath, [package]).dartReferencesTo(package);
+      : scanReferences(projectPath, [package]).dartReferencesTo(package);
 
   final code = switch (lookup.status) {
     LookupStatus.found => report.verdict.isBlocking ? ExitCodes.findings : ExitCodes.clean,
