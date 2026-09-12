@@ -648,7 +648,7 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
           <div class="card lane safe"><span class="dot" aria-hidden="true"></span><div><h3>Before you add a package</h3>
             <p>Works outside a project, and exits 1 on a blocking verdict: <code class="i">upkeep explain x &amp;&amp; dart pub add x</code></p></div></div>
           <div class="card lane"><span class="dot" aria-hidden="true"></span><div><h3>The replacement, when one is named</h3>
-            <p>When a publisher retires a package and names its successor, explain says so. A curated list for packages that died without being retired is in progress, and every entry will link to its source.</p></div></div>
+            <p>When a publisher retires a package, explain names its successor. For packages that died without being retired, a curated list names one too, links to the source that says so, and only when that successor is healthy today.</p></div></div>
         </div>
       </div>
       <div class="reveal">
@@ -837,7 +837,7 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
       <li class="card next reveal"><div class="top"><code>fix</code><span class="st">Next release</span></div>
         <p>Automatic, reversible fixes, pubspec changes verified by <code class="i">pub get</code>, and a to-do list with file and line.</p></li>
       <li class="card next reveal"><div class="top"><code>explain</code><span class="st">Next release</span></div>
-        <p>Every fact behind a verdict, and where your code uses the package.</p></li>
+        <p>Every fact behind a verdict, where your code uses the package, and a successor with its source.</p></li>
       <li class="card next reveal"><div class="top"><code>json</code><span class="st">Next release</span></div>
         <p>A versioned report for tools, and Markdown for job summaries.</p></li>
       <li class="card next reveal"><div class="top"><code>action</code><span class="st">Next release</span></div>
@@ -848,9 +848,6 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
       <p class="eyebrow">On the horizon</p>
     </div>
     <div class="vision">
-      <div class="card reveal"><span class="idx">IN PROGRESS</span><h3>Successors nobody named</h3>
-        <p>Most dead packages were never formally retired, so pub.dev names no replacement. A curated list, each entry
-        citing the source that names the successor, and suggested only when the successor is healthy.</p></div>
       <div class="card reveal"><span class="idx">EXPLORING</span><h3>Upgrade forecast</h3>
         <p>Resolve your whole dependency tree against the next Flutter release before you install it, and know on day one
         whether your project survives the upgrade.</p></div>

@@ -13,7 +13,7 @@
   markdown`: for GitHub job summaries and pull request descriptions.
 - The mechanism for curated successors to packages that died without being
   marked discontinued: each must cite its source, and is only suggested when the
-  successor is healthy. No entries ship yet.
+  successor is healthy. Ships with 14 entries verified on 12 September 2026.
 - A GitHub Action (`Minas-27/upkeep`): `scan` fails the job on blocking
   findings and writes a job summary; `fix-pr` opens or updates a pull request
   with the automatic fixes and the remaining to-dos.
