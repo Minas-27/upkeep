@@ -185,6 +185,13 @@
   .term .cmd{color:#fff}
   .term .pr{color:var(--teal)}
   .caption{font-size:.8rem; color:var(--ink-4); margin-top:14px; text-align:center}
+  .player{position:relative; margin-top:2.6rem; border-radius:18px; overflow:hidden; border:1px solid var(--line-2); background:#000;
+    box-shadow:0 0 0 1px rgba(0,0,0,.6),0 60px 120px -40px rgba(0,0,0,.9),0 0 80px -30px rgba(45,212,191,.35)}
+  .player video{display:block; width:100%; height:auto; aspect-ratio:16/9; background:#000}
+  .btn.soon{cursor:default; color:var(--ink-3); border-style:dashed}
+  .btn.soon:hover{background:rgba(255,255,255,.03); border-color:var(--line-2); color:var(--ink-3)}
+  .btn.soon em{font-style:normal; font-family:var(--mono); font-size:.66rem; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--teal-2); border:1px solid rgba(94,234,212,.3); border-radius:999px; padding:2px 7px}
   /* line-by-line playback, added by script only when motion is welcome */
   .ln{display:inline}
   .armed .ln{opacity:0}
@@ -331,6 +338,7 @@
   <symbol id="i-copy" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M11 5V3.5A1.5 1.5 0 0 0 9.5 2h-6A1.5 1.5 0 0 0 2 3.5v6A1.5 1.5 0 0 0 3.5 11H5"/></g></symbol>
   <symbol id="i-gh" viewBox="0 0 16 16"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></symbol>
   <symbol id="i-pub" viewBox="0 0 16 16"><g fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 1.5 14 4.75v6.5L8 14.5 2 11.25v-6.5z"/><path d="M2 4.75 8 8l6-3.25M8 8v6.5"/></g></symbol>
+  <symbol id="i-play" viewBox="0 0 16 16"><path fill="currentColor" d="M5 3.2v9.6a.6.6 0 0 0 .9.5l7.6-4.8a.6.6 0 0 0 0-1L5.9 2.7a.6.6 0 0 0-.9.5z"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 16 16"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" d="M3 8h10M9 4l4 4-4 4"/></symbol>
 </svg>
 
@@ -341,7 +349,7 @@
     <a class="brand" href="#top" aria-label="upkeep home"><svg viewBox="0 0 249 64" aria-hidden="true"><use href="#logo"/></svg></a>
     <span class="ver">v0.1.2</span>
     <nav class="links" aria-label="Sections">
-      <a href="app/">Web app</a>
+      <a href="#demo">Demo</a>
       <a href="#fix">Fix</a>
       <a href="#explain">Explain</a>
       <a href="#checks">What it checks</a>
@@ -379,8 +387,8 @@
     </p>
 
     <div class="cta">
-      <a class="btn primary" href="app/">Check a project in your browser <svg class="arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-      <a class="btn" href="#fix">See upkeep fix</a>
+      <a class="btn primary" href="#demo"><svg aria-hidden="true"><use href="#i-play"/></svg>Watch the demo</a>
+      <span class="btn soon" aria-disabled="true" title="The web app is coming soon">Web app <em>coming soon</em></span>
     </div>
 
     <div class="facts" aria-label="At a glance">
@@ -463,6 +471,25 @@
     </div>
   </div>
 </section>
+
+<section class="sec demo" id="demo" aria-labelledby="demo-h">
+  <div class="wrap">
+    <div class="center reveal">
+      <p class="eyebrow">Demo</p>
+      <h2 class="h2 grad" id="demo-h">See it find what is dying, and fix it.</h2>
+      <p class="lede">46 seconds. Real output, real projects.</p>
+    </div>
+    <div class="player reveal">
+      <video controls playsinline preload="none" poster="media/upkeep-demo-poster.jpg" width="1920" height="1080"
+        aria-label="upkeep demo: scanning and fixing a Flutter project in the terminal">
+        <source src="media/upkeep-demo.mp4" type="video/mp4">
+      </video>
+    </div>
+    <p class="caption">The web app shown in the demo is coming soon. The CLI and the GitHub Action are ready today.</p>
+  </div>
+</section>
+
+<hr class="divider">
 
 <section class="sec" aria-labelledby="how">
   <div class="wrap">
@@ -884,8 +911,7 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
       <button class="copy" type="button" data-copy="install-cmd-2" aria-label="Copy install command"><svg aria-hidden="true"><use href="#i-copy"/></svg><span>Copy</span></button>
     </div>
     <div class="cta" style="margin-top:1.6rem">
-      <a class="btn primary" href="app/">Check a project now <svg class="arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-      <a class="btn" href="https://pub.dev/packages/upkeep">Get it on pub.dev</a>
+      <a class="btn primary" href="https://pub.dev/packages/upkeep">Get it on pub.dev <svg class="arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
       <a class="btn" href="https://github.com/Minas-27/upkeep"><svg aria-hidden="true"><use href="#i-gh"/></svg>Star on GitHub</a>
     </div>
   </div>
