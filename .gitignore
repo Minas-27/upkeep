@@ -2,3 +2,5 @@
 .packages
 pubspec.lock
 build/
+PRODUCT_PLAN.md
+LAUNCH.md
