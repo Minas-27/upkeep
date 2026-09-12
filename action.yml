@@ -64,8 +64,16 @@ runs:
       run: |
         if [[ -n "$UPKEEP_VERSION" ]]; then
           dart pub global activate upkeep "$UPKEEP_VERSION"
+          upkeep --version
         else
-          dart pub global activate --source path "$GITHUB_ACTION_PATH"
+          # Compiled rather than path-activated: a path-activated executable
+          # prints build progress to stdout on first run, which corrupts the
+          # JSON report the later steps read.
+          bin="$RUNNER_TEMP/upkeep-bin"
+          mkdir -p "$bin"
+          (cd "$GITHUB_ACTION_PATH" && dart pub get > /dev/null && dart compile exe bin/upkeep.dart -o "$bin/upkeep" > /dev/null)
+          echo "$bin" >> "$GITHUB_PATH"
+          "$bin/upkeep" --version
         fi
 
     - id: run

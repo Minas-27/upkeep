@@ -41,6 +41,7 @@ case "$command" in
   scan)
     upkeep scan -p "$path" --format markdown "${strict[@]}" >> "$summary"
     upkeep scan -p "$path" --format json "${strict[@]}" > "$report"
+    jq -e '.schemaVersion' "$report" > /dev/null || fail "upkeep did not produce a valid JSON report"
     upkeep scan -p "$path" --no-color "${strict[@]}"
     code=$?
     echo "exit-code=$code" >> "$GITHUB_OUTPUT"
@@ -56,7 +57,9 @@ case "$command" in
     # The plan names every file an automatic fix touches. Only those are
     # committed, so nothing else in the workspace can leak into the pull request.
     upkeep fix -p "$path" --format json > "$report" || true
-    mapfile -t files < <(jq -r '.automatic[].file' "$report" 2>/dev/null)
+    # An unreadable plan must never read as "nothing to fix".
+    jq -e '.schemaVersion' "$report" > /dev/null || fail "upkeep did not produce a valid fix plan: $(head -c 200 "$report")"
+    mapfile -t files < <(jq -r '.automatic[].file' "$report")
 
     upkeep fix --apply -p "$path" --format markdown > "$body"
     code=$?
