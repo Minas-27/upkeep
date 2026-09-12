@@ -19,6 +19,9 @@ jobs:
           path: .github/action-fixture
       - name: Expect blocking findings, a build failure and a JSON report
         run: |
+          echo "::notice title=scan outputs::exit-code='${{ steps.upkeep.outputs.exit-code }}' outcome='${{ steps.upkeep.outcome }}' report='${{ steps.upkeep.outputs.report }}'"
+          report="${{ steps.upkeep.outputs.report }}"
+          [[ -f "$report" ]] && echo "::notice title=scan summary::$(jq -c '.summary' "$report") dart=$(jq -r '.project.dart' "$report")"
           set -x
           test "${{ steps.upkeep.outputs.exit-code }}" = "1"
           jq -e '.schemaVersion == 1 and .summary.blocking == 2 and .summary.buildFailures == 1' "${{ steps.upkeep.outputs.report }}"

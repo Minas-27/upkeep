@@ -160,16 +160,13 @@ $ upkeep explain some_package && dart pub add some_package
 
 ## Successors for packages nobody retired
 
-pub.dev only names a replacement when a publisher sets one. Most dead packages
-were simply left behind. upkeep carries a curated map of successors for those,
-and holds it to a stricter bar than anything else it says:
-
-- every entry cites a primary source, such as the old package's own README
-  naming its successor, and the report prints that link
-- where several alternatives compete and nobody official named one, the package
-  is left out
-- a successor is only suggested for a package already judged unhealthy, and only
-  when the successor itself checks out healthy on pub.dev today
+pub.dev only names a replacement when a publisher sets one, and most dead
+packages were simply left behind. upkeep has the mechanism for a curated map of
+successors for those. The map itself is still empty: entries are added only
+with a primary source, such as the old package's own README naming its
+successor. When there are entries, a successor is only suggested for a package
+already judged unhealthy, and only when the successor itself checks out healthy
+on pub.dev that day.
 
 ## In CI
 

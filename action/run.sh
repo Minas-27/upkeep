@@ -19,6 +19,24 @@ strict=()
 
 echo "report=$report" >> "$GITHUB_OUTPUT"
 
+# Surfaces a failure as a workflow annotation, where it is visible without
+# opening the log.
+fail() {
+  echo "::error title=upkeep::$1"
+  echo "exit-code=${2:-2}" >> "$GITHUB_OUTPUT"
+  exit "${2:-2}"
+}
+
+# Runs a command; on failure, reports its last output lines as an annotation.
+must() {
+  local out
+  if ! out="$("$@" 2>&1)"; then
+    echo "$out"
+    fail "$(printf '%s' "$*" | head -c 80) failed: $(printf '%s' "$out" | tail -n 3 | tr '\n' ' ')"
+  fi
+  echo "$out"
+}
+
 case "$command" in
   scan)
     upkeep scan -p "$path" --format markdown "${strict[@]}" >> "$summary"
@@ -33,7 +51,7 @@ case "$command" in
     body="${RUNNER_TEMP:-/tmp}/upkeep-pr.md"
     base="$(git rev-parse --abbrev-ref HEAD)"
 
-    git switch -C "$branch"
+    must git switch -C "$branch"
 
     # The plan names every file an automatic fix touches. Only those are
     # committed, so nothing else in the workspace can leak into the pull request.
@@ -47,7 +65,7 @@ case "$command" in
 
     if [[ "$code" == "2" ]]; then
       cat "$body"
-      exit 2
+      fail "upkeep fix --apply did not complete: $(grep -v '^#' "$body" | tr '\n' ' ' | head -c 300)"
     fi
 
     changed=()
@@ -67,17 +85,24 @@ case "$command" in
 
     git config user.name "upkeep[bot]"
     git config user.email "upkeep-bot@users.noreply.github.com"
-    git add -- "${changed[@]}"
-    git commit -m "Apply upkeep fixes" -m "$(head -c 60000 "$body")"
-    git push --force origin "$branch"
+    must git add -- "${changed[@]}"
+    must git commit -m "Apply upkeep fixes" -m "$(head -c 60000 "$body")"
+    must git push --force origin "$branch"
 
     title="upkeep: dependency and build fixes"
-    existing="$(gh pr list --head "$branch" --state open --json url --jq '.[0].url')"
+    # Command substitutions run in a subshell, where fail() cannot end the
+    # script, so these two check their own status.
+    if ! existing="$(gh pr list --head "$branch" --state open --json url --jq '.[0].url' 2>&1)"; then
+      fail "gh pr list failed: $existing"
+    fi
     if [[ -n "$existing" ]]; then
-      gh pr edit "$existing" --body-file "$body"
+      must gh pr edit "$existing" --body-file "$body" > /dev/null
       url="$existing"
     else
-      url="$(gh pr create --base "$base" --head "$branch" --title "$title" --body-file "$body")"
+      if ! created="$(gh pr create --base "$base" --head "$branch" --title "$title" --body-file "$body" 2>&1)"; then
+        fail "gh pr create failed: $(printf '%s' "$created" | tail -n 3 | tr '\n' ' ')"
+      fi
+      url="$(printf '%s' "$created" | tail -n 1)"
     fi
     echo "pull-request=$url" >> "$GITHUB_OUTPUT"
     echo "Pull request: $url"

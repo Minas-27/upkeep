@@ -11,8 +11,9 @@
   is used. Works outside a project, as a check before adding a dependency.
 - `--format json`: a versioned document (schema 1) for tools. `--format
   markdown`: for GitHub job summaries and pull request descriptions.
-- Curated successors for packages that died without being marked discontinued,
-  each citing its source, and only suggested when the successor is healthy.
+- The mechanism for curated successors to packages that died without being
+  marked discontinued: each must cite its source, and is only suggested when the
+  successor is healthy. No entries ship yet.
 - A GitHub Action (`Minas-27/upkeep`): `scan` fails the job on blocking
   findings and writes a job summary; `fix-pr` opens or updates a pull request
   with the automatic fixes and the remaining to-dos.

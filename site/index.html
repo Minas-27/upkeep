@@ -505,9 +505,9 @@
     <div class="numbers reveal">
       <div class="num"><b class="grad-teal">44%</b><span>of developer dissatisfaction traced to ecosystem and version-matrix problems</span></div>
       <div class="num"><b class="grad">18%</b><span>say the critical packages they need do not exist yet</span></div>
-      <div class="num"><b class="grad">0</b><span>existing tools that flag a dying dependency and name its replacement</span></div>
+      <div class="num"><b class="grad">869k</b><span>downloads last month of <code class="i">pedantic</code>, a package its own publisher discontinued years ago</span></div>
     </div>
-    <p class="source">Source: Flutter Q2 2026 user survey, flutter.dev &middot; the third figure is what a search of the pub ecosystem turns up, where the standing advice is to check by hand.</p>
+    <p class="source">Sources: Flutter Q2 2026 user survey, flutter.dev &middot; pub.dev API for <code>pedantic</code>, 12 September 2026.</p>
   </div>
 </section>
 
@@ -647,8 +647,8 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
         <div class="lanes">
           <div class="card lane safe"><span class="dot" aria-hidden="true"></span><div><h3>Before you add a package</h3>
             <p>Works outside a project, and exits 1 on a blocking verdict: <code class="i">upkeep explain x &amp;&amp; dart pub add x</code></p></div></div>
-          <div class="card lane"><span class="dot" aria-hidden="true"></span><div><h3>Successors with receipts</h3>
-            <p>For packages that died without being retired, a curated successor, suggested only when it is healthy today and always with a link to the source that names it.</p></div></div>
+          <div class="card lane"><span class="dot" aria-hidden="true"></span><div><h3>The replacement, when one is named</h3>
+            <p>When a publisher retires a package and names its successor, explain says so. A curated list for packages that died without being retired is in progress, and every entry will link to its source.</p></div></div>
         </div>
       </div>
       <div class="reveal">
@@ -827,20 +827,20 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
     <div class="reveal">
       <p class="eyebrow">Roadmap</p>
       <h2 class="h2 grad" id="road-h">Today it keeps one project healthy. Next, the whole ecosystem.</h2>
-      <p class="lede">What ships in 0.2.0 is built and tested. Everything after it is a direction, not a promise, and is
-      labelled that way.</p>
+      <p class="lede">The 0.2.0 features are built and tested on real Flutter apps, and not released yet. Everything after
+      them is a direction, not a promise, and is labelled that way.</p>
     </div>
 
     <ol class="road shipped-row">
       <li class="card shipped reveal"><div class="top"><code>scan</code><span class="st">Live</span></div>
         <p>Verdicts with reasons, the Android build matrix, CI exit codes. On pub.dev since 0.1.</p></li>
-      <li class="card next reveal"><div class="top"><code>fix</code><span class="st">0.2.0</span></div>
-        <p>Automatic, reversible fixes verified by <code class="i">pub get</code>, and a to-do list with file and line.</p></li>
-      <li class="card next reveal"><div class="top"><code>explain</code><span class="st">0.2.0</span></div>
-        <p>Every fact behind a verdict, and curated successors that cite their source.</p></li>
-      <li class="card next reveal"><div class="top"><code>json</code><span class="st">0.2.0</span></div>
+      <li class="card next reveal"><div class="top"><code>fix</code><span class="st">Next release</span></div>
+        <p>Automatic, reversible fixes, pubspec changes verified by <code class="i">pub get</code>, and a to-do list with file and line.</p></li>
+      <li class="card next reveal"><div class="top"><code>explain</code><span class="st">Next release</span></div>
+        <p>Every fact behind a verdict, and where your code uses the package.</p></li>
+      <li class="card next reveal"><div class="top"><code>json</code><span class="st">Next release</span></div>
         <p>A versioned report for tools, and Markdown for job summaries.</p></li>
-      <li class="card next reveal"><div class="top"><code>action</code><span class="st">0.2.0</span></div>
+      <li class="card next reveal"><div class="top"><code>action</code><span class="st">Next release</span></div>
         <p>A GitHub Action that scans every pull request and opens the fix pull request itself.</p></li>
     </ol>
 
@@ -848,6 +848,9 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
       <p class="eyebrow">On the horizon</p>
     </div>
     <div class="vision">
+      <div class="card reveal"><span class="idx">IN PROGRESS</span><h3>Successors nobody named</h3>
+        <p>Most dead packages were never formally retired, so pub.dev names no replacement. A curated list, each entry
+        citing the source that names the successor, and suggested only when the successor is healthy.</p></div>
       <div class="card reveal"><span class="idx">EXPLORING</span><h3>Upgrade forecast</h3>
         <p>Resolve your whole dependency tree against the next Flutter release before you install it, and know on day one
         whether your project survives the upgrade.</p></div>
