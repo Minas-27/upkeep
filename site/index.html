@@ -1,0 +1,433 @@
+<title>upkeep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:wght@700;900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+  :root{
+    --ground:#F1F3F0; --surface:#FFFFFF; --sunk:#E7EBE6;
+    --ink:#131B1E; --ink-soft:#3A474B; --muted:#6B7A7E;
+    --rule:#D6DDD8; --rule-strong:#BCC7C0;
+    --accent:#0E6E6E; --accent-ink:#FFFFFF;
+    --v-discontinued:#8E3A8E; --v-incompatible:#B3301F; --v-atrisk:#95610F;
+    --v-blocked:#1B6A8C; --v-healthy:#2E6B3E;
+    --term-bg:#101A1C; --term-fg:#D6E0DD; --term-dim:#7A8D89; --term-rule:#22322F;
+    --t-discontinued:#D48CD8; --t-incompatible:#F0806B; --t-atrisk:#E0A845;
+    --t-blocked:#6FBCDE; --t-healthy:#6FC98A;
+    --display:"Chivo","Helvetica Neue",Arial,sans-serif;
+    --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+    --maxw:74ch;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#0B1315; --surface:#121C1F; --sunk:#0F191B;
+      --ink:#E4EBE9; --ink-soft:#BAC7C4; --muted:#849693;
+      --rule:#223033; --rule-strong:#32433F;
+      --accent:#4FB3AE; --accent-ink:#08201F;
+      --v-discontinued:#C888D0; --v-incompatible:#E5705C; --v-atrisk:#D9A038;
+      --v-blocked:#5FB4DA; --v-healthy:#5FBE79;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0B1315; --surface:#121C1F; --sunk:#0F191B;
+    --ink:#E4EBE9; --ink-soft:#BAC7C4; --muted:#849693;
+    --rule:#223033; --rule-strong:#32433F;
+    --accent:#4FB3AE; --accent-ink:#08201F;
+    --v-discontinued:#C888D0; --v-incompatible:#E5705C; --v-atrisk:#D9A038;
+    --v-blocked:#5FB4DA; --v-healthy:#5FBE79;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--ground); color:var(--ink);
+    font-family:var(--body); font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding-inline:20px; padding-block:0}
+  .wide{max-width:92ch}
+
+  h1,h2,h3,.eyebrow,.mark{font-family:var(--display)}
+  h1{font-size:clamp(2.1rem,6vw,3.3rem); line-height:1.04; font-weight:900;
+     letter-spacing:-.02em; text-wrap:balance; margin:0 0 .6rem}
+  h2{font-size:clamp(1.3rem,3.2vw,1.7rem); font-weight:700; letter-spacing:-.01em;
+     text-wrap:balance; margin:0 0 .2rem}
+  h3{font-size:1rem; font-weight:700; margin:0 0 .35rem; letter-spacing:-.005em}
+  p{margin:0 0 1rem}
+  a{color:var(--accent); text-underline-offset:3px; text-decoration-thickness:1px}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px}
+
+  .eyebrow{
+    font-size:.7rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--muted); margin:0 0 .9rem;
+  }
+
+  /* ---- masthead: a document header, not a nav bar ---- */
+  header.masthead{border-bottom:1px solid var(--rule-strong); background:var(--surface)}
+  .masthead .wrap{display:flex; flex-wrap:wrap; gap:.6rem 1rem; align-items:baseline;
+    padding-block:14px}
+  .mark{font-size:1.15rem; font-weight:900; letter-spacing:-.03em}
+  .chip{
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.02em;
+    border:1px solid var(--rule-strong); color:var(--muted);
+    padding:2px 7px; border-radius:2px; white-space:nowrap;
+  }
+  .masthead .spacer{flex:1 1 auto}
+  .masthead .meta{font-family:var(--mono); font-size:.7rem; color:var(--muted)}
+
+  section{border-bottom:1px solid var(--rule)}
+  section .wrap{padding-block:clamp(2.2rem,6vw,3.4rem)}
+
+  .lede{font-size:clamp(1.02rem,2.3vw,1.15rem); color:var(--ink-soft); margin-bottom:1.4rem}
+  .source{font-family:var(--mono); font-size:.74rem; color:var(--muted); line-height:1.6}
+
+  /* ---- the stat row: these figures are the argument ---- */
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1px;
+    background:var(--rule-strong); border:1px solid var(--rule-strong); margin:1.6rem 0 1rem}
+  .stat{background:var(--surface); padding:14px 16px}
+  .stat b{display:block; font-family:var(--display); font-weight:900;
+    font-size:clamp(1.7rem,5vw,2.3rem); line-height:1; letter-spacing:-.03em;
+    font-variant-numeric:tabular-nums; margin-bottom:.35rem}
+  .stat span{font-size:.86rem; color:var(--ink-soft); line-height:1.45; display:block}
+
+  /* ---- terminal: deliberately one visual world in both themes ---- */
+  .term-head{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:10px}
+  .tabs{display:flex; gap:6px; flex-wrap:wrap}
+  .tab{
+    font-family:var(--mono); font-size:.72rem; cursor:pointer;
+    background:transparent; color:var(--muted);
+    border:1px solid var(--rule-strong); border-radius:2px; padding:5px 10px;
+  }
+  .tab[aria-selected="true"]{background:var(--ink); color:var(--ground); border-color:var(--ink)}
+  .term{
+    background:var(--term-bg); color:var(--term-fg); border:1px solid var(--term-rule);
+    border-radius:3px; overflow-x:auto; padding:16px 18px;
+  }
+  .term pre{
+    margin:0; font-family:var(--mono); font-size:.76rem; line-height:1.75;
+    white-space:pre; color:var(--term-fg);
+  }
+  .term .b{color:#fff; font-weight:700}
+  .term .d{color:var(--term-dim)}
+  .term .vD{color:var(--t-discontinued); font-weight:700}
+  .term .vI{color:var(--t-incompatible); font-weight:700}
+  .term .vA{color:var(--t-atrisk); font-weight:700}
+  .term .vB{color:var(--t-blocked); font-weight:700}
+  .term .vH{color:var(--t-healthy); font-weight:700}
+  .term .fix{color:#7FD4CE}
+  .caption{font-family:var(--mono); font-size:.7rem; color:var(--muted); margin-top:9px}
+
+  /* ---- checks: two panels, differentiated by role not by uniform cards ---- */
+  .panels{display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:1.6rem; margin-top:1.4rem}
+  .panel{border-top:3px solid var(--accent); padding-top:.9rem}
+  .panel:nth-child(2){border-top-color:var(--v-atrisk)}
+  .panel ul{margin:.5rem 0 0; padding-left:1.05rem}
+  .panel li{margin-bottom:.4rem; color:var(--ink-soft); font-size:.95rem}
+
+  /* ---- verdict key: the semantic system, stated once ---- */
+  .key{display:grid; gap:1px; background:var(--rule); border:1px solid var(--rule); margin-top:1.3rem}
+  .key div{background:var(--surface); display:grid; grid-template-columns:minmax(108px,auto) 1fr;
+    gap:14px; padding:9px 14px; align-items:baseline}
+  .key code{font-family:var(--mono); font-size:.71rem; font-weight:700; letter-spacing:.04em}
+  .key p{margin:0; font-size:.88rem; color:var(--ink-soft)}
+  .kD{color:var(--v-discontinued)} .kI{color:var(--v-incompatible)}
+  .kA{color:var(--v-atrisk)} .kB{color:var(--v-blocked)} .kH{color:var(--v-healthy)}
+
+  /* ---- the rules: labelled, not numbered; they are not a sequence ---- */
+  .rules{margin-top:1.3rem; display:grid; gap:1.1rem}
+  .rule-item{display:grid; grid-template-columns:1fr; gap:.2rem;
+    border-left:2px solid var(--rule-strong); padding-left:14px}
+  .rule-item h3{color:var(--ink)}
+  .rule-item p{margin:0; color:var(--ink-soft); font-size:.95rem}
+
+  pre.code{
+    background:var(--sunk); border:1px solid var(--rule); border-radius:3px;
+    font-family:var(--mono); font-size:.78rem; line-height:1.7;
+    padding:13px 15px; overflow-x:auto; margin:0 0 1rem; color:var(--ink)
+  }
+  table{border-collapse:collapse; width:100%; font-size:.9rem; margin-bottom:1rem}
+  th,td{text-align:left; padding:7px 10px; border-bottom:1px solid var(--rule); vertical-align:top}
+  th{font-family:var(--display); font-size:.72rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--muted); font-weight:700}
+  td code{font-family:var(--mono); font-size:.78rem; font-variant-numeric:tabular-nums}
+  .scroll{overflow-x:auto}
+
+  .status{display:grid; gap:.55rem; margin-top:1.2rem}
+  .status div{display:grid; grid-template-columns:auto 1fr; gap:12px; align-items:baseline;
+    font-size:.94rem; color:var(--ink-soft)}
+  .status code{font-family:var(--mono); font-size:.7rem; color:var(--muted); white-space:nowrap}
+  .now{color:var(--ink); font-weight:600}
+
+  footer{background:var(--surface)}
+  footer .wrap{padding-block:26px; font-size:.88rem; color:var(--muted)}
+
+  @media (prefers-reduced-motion:no-preference){
+    .tab{transition:background .14s ease,color .14s ease,border-color .14s ease}
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap wide">
+    <span class="mark">upkeep</span>
+    <span class="chip">v0.1.0</span>
+    <span class="spacer"></span>
+    <span class="meta">a Flutter project health report</span>
+  </div>
+</header>
+
+<section>
+  <div class="wrap wide">
+    <p class="eyebrow">The problem, measured by Google</p>
+    <h1>44% of Flutter developer frustration is version guesswork.</h1>
+    <p class="lede">
+      That figure is not a pitch. It is Google's own Q2 2026 Flutter survey, which found
+      that platform and ecosystem maturity drives 44% of developer dissatisfaction, and
+      named the cause outright: hours lost juggling Flutter, Dart, Gradle, Kotlin and JVM
+      versions. Meanwhile packages die quietly, and nothing tells you.
+    </p>
+
+    <div class="stats">
+      <div class="stat">
+        <b>44%</b>
+        <span>of developer dissatisfaction traced to ecosystem and version-matrix problems</span>
+      </div>
+      <div class="stat">
+        <b>18%</b>
+        <span>say the critical packages they need do not exist yet</span>
+      </div>
+      <div class="stat">
+        <b>0</b>
+        <span>existing tools that flag a dying dependency and name its replacement</span>
+      </div>
+    </div>
+    <p class="source">
+      Source: Flutter Q2 2026 user survey, flutter.dev &middot; the third figure is what a search
+      of the pub ecosystem turns up, where the standing advice is to check by hand.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap wide">
+    <p class="eyebrow">The tool</p>
+    <h2>One command. Every verdict shows its reasons.</h2>
+    <p class="lede">
+      <code style="font-family:var(--mono);font-size:.85em">upkeep scan</code> reads the project
+      you are standing in and reports what is actually wrong with it.
+    </p>
+
+    <div class="term-head">
+      <div class="tabs" role="tablist" aria-label="Example scans">
+        <button class="tab" role="tab" id="tab-problem" aria-controls="out-problem" aria-selected="true">a real project</button>
+        <button class="tab" role="tab" id="tab-clean" aria-controls="out-clean" aria-selected="false">a clean project</button>
+      </div>
+    </div>
+
+    <div class="term">
+<pre id="out-problem" role="tabpanel" aria-labelledby="tab-problem"><span class="b">upkeep</span> <span class="d">0.1.0</span>   <span class="b">my_app</span>   <span class="d">Dart 3.11.0</span>
+
+<span class="b">DEPENDENCIES</span><span class="d">   27 direct</span>
+
+  <span class="vD">DISCONTINUED</span>   <span class="b">telephony</span>  <span class="d">0.2.0</span>
+      <span class="d">marked discontinued by its publisher on pub.dev</span>
+
+  <span class="vI">INCOMPATIBLE</span>   <span class="b">lucide_icons</span>  <span class="d">0.257.0</span>
+      <span class="d">its newest release caps Dart at &gt;=2.12.0 &lt;3.0.0, which excludes</span>
+      <span class="d">the Dart 3.11.0 in use here</span>
+      <span class="d">no release has ever supported this Dart, so waiting will not fix it</span>
+
+  <span class="vA">AT RISK</span>        <span class="b">isar</span>  <span class="d">3.1.0+1</span>
+      <span class="d">declares support only up to Dart &lt;3.0.0; it resolves today through</span>
+      <span class="d">pub's Dart 3 allowance, not because it was updated</span>
+      <span class="d">no release in 30 months</span>
+
+  <span class="vB">SDK BLOCKED</span>    <span class="b">8 packages have a newer release your Dart is too old for</span>
+      <span class="d">cached_network_image, flutter_riverpod, go_router, lottie, pdf, ...</span>
+      <span class="fix">upgrade Flutter to pick these up: flutter upgrade</span>
+
+  <span class="d">11 healthy  .  7 stale  .  3 skipped (sdk, git or path)</span>
+
+<span class="b">ANDROID BUILD</span>
+
+  <span class="vI">FAIL</span>       Gradle 8.4 is too old for AGP 8.9
+             <span class="d">AGP 8.9 requires Gradle 8.11.1 or newer. This does not build.</span>
+             <span class="fix">fix: ./gradlew wrapper --gradle-version=8.11.1</span> <span class="d">(run in android/)</span>
+
+  <span class="vH">PASS</span>       JDK 17 satisfies AGP 8.9
+
+<span class="b">1 blocking, 1 at risk, 1 build failure</span>
+<span class="d">exit 1</span></pre>
+
+<pre id="out-clean" role="tabpanel" aria-labelledby="tab-clean" hidden><span class="b">upkeep</span> <span class="d">0.1.0</span>   <span class="b">my_app</span>   <span class="d">Dart 3.11.0</span>
+
+<span class="b">DEPENDENCIES</span><span class="d">   14 direct</span>
+
+  <span class="vH">Nothing to worry about.</span>
+
+  <span class="d">12 healthy  .  2 stale</span>
+
+<span class="b">ANDROID BUILD</span>
+
+  <span class="vH">PASS</span>       Gradle 8.14 satisfies AGP 8.11.1
+             <span class="d">Requires 8.13 or newer.</span>
+
+  <span class="vH">PASS</span>       JDK 17 satisfies AGP 8.11.1
+             <span class="d">Detected via java -version on PATH.</span>
+
+  <span class="vH">PASS</span>       compileSdk is managed by Flutter
+             <span class="d">Set from flutter.compileSdkVersion, so it tracks your Flutter SDK.</span>
+
+<span class="vH">Clean.</span>
+<span class="d">exit 0</span></pre>
+    </div>
+    <p class="caption">Real output. The exit code is the point: this works as a CI check with no configuration.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap wide">
+    <p class="eyebrow">What it checks</p>
+    <div class="panels">
+      <div class="panel">
+        <h3>Your dependencies</h3>
+        <p style="color:var(--ink-soft);font-size:.95rem;margin:0">
+          Scored against pub.dev's own data, not opinion.
+        </p>
+        <ul>
+          <li>Release recency and pub points</li>
+          <li>Dart 3 and WASM readiness</li>
+          <li>SDK constraints that block an upgrade</li>
+          <li>The official discontinued flag &mdash; and the replacement the publisher named</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Your Android build matrix</h3>
+        <p style="color:var(--ink-soft);font-size:.95rem;margin:0">
+          Validated against Google's published requirements for AGP 8.0 through 9.4.
+        </p>
+        <ul>
+          <li>Gradle wrapper against the AGP in use</li>
+          <li>JDK against the AGP minimum</li>
+          <li><code style="font-family:var(--mono);font-size:.85em">compileSdk</code> against the documented ceiling</li>
+          <li>The exact command that fixes each failure</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="key">
+      <div><code class="kD">DISCONTINUED</code><p>The publisher said stop. Popularity does not override it.</p></div>
+      <div><code class="kI">INCOMPATIBLE</code><p>The package's own ceiling excludes your Dart. No release is coming.</p></div>
+      <div><code class="kA">AT RISK</code><p>More than one warning sign, each one named.</p></div>
+      <div><code class="kB">SDK BLOCKED</code><p>Your Flutter is behind. Grouped into one line, never fails your build.</p></div>
+      <div><code class="kH">HEALTHY</code><p>Checked, and nothing to say.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap wide">
+    <p class="eyebrow">The rules it holds itself to</p>
+    <h2>A tool that judges your dependencies has one asset, and it is trust.</h2>
+    <p class="lede">Each of these exists because an earlier version of the engine got a verdict wrong.</p>
+
+    <div class="rules">
+      <div class="rule-item">
+        <h3>Missing data is never evidence</h3>
+        <p>When pub.dev cannot be reached, the verdict is <em>unknown</em>, not <em>dead</em>. Requests
+        retry, and a dropped response is never reported as a missing package. An early build accused a
+        perfectly maintained package of neglect on the strength of one truncated HTTP response.</p>
+      </div>
+      <div class="rule-item">
+        <h3>Popularity never overrides a discontinued flag</h3>
+        <p><code style="font-family:var(--mono);font-size:.85em">pedantic</code> is discontinued, scores
+        a perfect 160 of 160, and is still downloaded hundreds of thousands of times a month. A rule
+        that trusted downloads called it healthy. The publisher's word wins.</p>
+      </div>
+      <div class="rule-item">
+        <h3>The resolver gets the last word</h3>
+        <p>Packages like <code style="font-family:var(--mono);font-size:.85em">isar</code> and
+        <code style="font-family:var(--mono);font-size:.85em">hive</code> cap themselves below Dart 3 yet
+        still resolve, because pub relaxes that bound for null-safe packages. Where pub.dev's
+        compatibility tag contradicts the arithmetic, the tag wins &mdash; because that is what actually
+        happens when you run <code style="font-family:var(--mono);font-size:.85em">pub get</code>.</p>
+      </div>
+      <div class="rule-item">
+        <h3>Stable is not abandoned</h3>
+        <p>A small, finished, widely used package that has not needed a release in two years is not
+        dying. It is done.</p>
+      </div>
+      <div class="rule-item">
+        <h3>No guessing</h3>
+        <p>Where Google does not publish a number, upkeep says it cannot check rather than inventing
+        one. Where a value had to be inferred, it softens the verdict instead of hardening it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap wide">
+    <p class="eyebrow">Using it</p>
+    <h2>Install, scan, or drop it into CI.</h2>
+<pre class="code">dart pub global activate upkeep
+upkeep scan</pre>
+<pre class="code">- run: dart pub global activate upkeep
+- run: upkeep scan</pre>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Exit code</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>0</code></td><td>Clean</td></tr>
+          <tr><td><code>1</code></td><td>Blocking: a discontinued, incompatible or dead dependency, or an Android matrix that does not build</td></tr>
+          <tr><td><code>2</code></td><td>The scan could not run</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:.92rem;color:var(--ink-soft)">
+      Responses cache for 24 hours, so repeat scans do no network work. Add
+      <code style="font-family:var(--mono);font-size:.85em">--fail-on-at-risk</code> to treat warnings as failures.
+    </p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap wide">
+    <p class="eyebrow">Where it is going</p>
+    <h2>Diagnosis first. Treatment once the diagnosis is trusted.</h2>
+    <div class="status">
+      <div><code>0.1</code><span class="now">Scan, verdicts, Android matrix, CI exit codes. Built and tested.</span></div>
+      <div><code>0.2</code><span>JSON output, <code>upkeep explain</code>, curated replacements for packages that died without ever being marked discontinued.</span></div>
+      <div><code>0.3</code><span><code>upkeep fix</code> &mdash; guided and reversible, and it refuses to run on a dirty git tree.</span></div>
+      <div><code>0.4</code><span>A GitHub Action, because CI is where a tool becomes a habit.</span></div>
+      <div><code>1.0</code><span>A GitHub App that opens the upgrade pull request for you.</span></div>
+    </div>
+    <p style="margin-top:1.3rem;font-size:.92rem;color:var(--ink-soft)">
+      The command line tool is free and MIT licensed, and stays that way. The compounding asset is the
+      knowledge base behind it &mdash; the compatibility matrix, the replacement map, the known-bad
+      combinations &mdash; which can only be built by paying attention every week for years.
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap wide">
+    Built by <a href="https://abroid.dev">Abraham Addisu</a> in Ethiopia. MIT licensed.
+    Status: 0.1.0 is complete and tested; it goes live on pub.dev at launch.
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+    function select(id) {
+      tabs.forEach(function (t) {
+        var on = t.id === id;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        var panel = document.getElementById(t.getAttribute('aria-controls'));
+        if (panel) panel.hidden = !on;
+      });
+    }
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () { select(t.id); });
+    });
+  })();
+</script>
