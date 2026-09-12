@@ -7,4 +7,3 @@ environment:
 dependencies:
   http_server: ^1.0.0
   path: ^1.9.0
-  pedantic: ^1.11.1
