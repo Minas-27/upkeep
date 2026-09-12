@@ -23,7 +23,7 @@ inputs:
       this action, so the action ref you pin is exactly the upkeep you get.
     default: ''
   flutter:
-    description: "Install Flutter instead of plain Dart. auto detects 'sdk: flutter' in pubspec.yaml."
+    description: "Use Flutter instead of plain Dart. auto detects 'sdk: flutter' in pubspec.yaml. An SDK already set up by the workflow is used as is; otherwise the stable one is installed."
     default: auto
   branch:
     description: fix-pr only. Branch the fixes are pushed to.
@@ -53,14 +53,10 @@ runs:
         UPKEEP_FLUTTER: ${{ inputs.flutter }}
       run: bash "${{ github.action_path }}/action/detect-sdk.sh"
 
-    - if: steps.sdk.outputs.flutter == 'true'
-      uses: subosito/flutter-action@v2
-      with:
-        channel: stable
-        cache: true
-
-    - if: steps.sdk.outputs.flutter != 'true'
-      uses: dart-lang/setup-dart@v1
+    - shell: bash
+      env:
+        UPKEEP_NEEDS_FLUTTER: ${{ steps.sdk.outputs.flutter }}
+      run: bash "${{ github.action_path }}/action/install-sdk.sh"
 
     - shell: bash
       env:
@@ -71,7 +67,6 @@ runs:
         else
           dart pub global activate --source path "$GITHUB_ACTION_PATH"
         fi
-        echo "$HOME/.pub-cache/bin" >> "$GITHUB_PATH"
 
     - id: run
       shell: bash
