@@ -4198,7 +4198,7 @@ hj:function hj(){},
 hk:function hk(){},
 hl:function hl(){},
 rZ(){var s,r,q={}
-q.version="0.1.2"
+q.version="0.2.0"
 s=new A.kL()
 if(typeof s=="function")A.A(A.G("Attempting to rewrap a JS function.",null))
 r=function(a,b){return function(c){return a(b,c,arguments.length)}}(A.qm,s)
@@ -4249,8 +4249,8 @@ d=h.f
 a6=f.b
 a7=f.c
 a9=f.d
-a1=A.t5(f.e,a9!=null,d,a6,a0,e,a7,"0.1.2")
-a2=A.rB(a0,b,m.a,null,null,"0.1.2")
+a1=A.t5(f.e,a9!=null,d,a6,a0,e,a7,"0.2.0")
+a2=A.rB(a0,b,m.a,null,null,"0.2.0")
 a7=c.c
 e=B.o.c3(a1,null)
 a6=B.o.c3(a2,null)
@@ -4260,7 +4260,7 @@ b3=f.b
 b4=f.c
 b5=f.d
 b6=t.N
-b6=B.o.c4(A.aj(["ok",!0,"referencesRead",a7,"scan",e,"fix",a6,"markdown",A.aj(["scan",A.t6(f.e,b5!=null,a9,b3,d,b4,"0.1.2"),"fix",A.rC(b,m.a,"0.1.2")],b6,b6)],b6,t.z),null)
+b6=B.o.c4(A.aj(["ok",!0,"referencesRead",a7,"scan",e,"fix",a6,"markdown",A.aj(["scan",A.t6(f.e,b5!=null,a9,b3,d,b4,"0.2.0"),"fix",A.rC(b,m.a,"0.2.0")],b6,b6)],b6,t.z),null)
 q=b6
 s=1
 break

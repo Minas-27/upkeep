@@ -21,7 +21,7 @@ or skip the PATH entirely with `dart pub global run upkeep scan`.
 ## What you get
 
 ```
-upkeep 0.1.0   my_app   Dart 3.11.0
+upkeep 0.2.0   my_app   Dart 3.11.0
 
 DEPENDENCIES   27 direct
 

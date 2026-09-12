@@ -1,4 +1,4 @@
-## 0.2.0 (unreleased)
+## 0.2.0
 
 - `upkeep fix`: a plan of automatic changes and a to-do list, with the file and
   line where each affected package is used. Changes nothing by default.
