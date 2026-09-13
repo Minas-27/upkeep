@@ -13,6 +13,7 @@ dart run bin/upkeep.dart fix --no-color --path <dir>   # add --apply to edit
 dart run bin/upkeep.dart explain <package> --no-color
 # any command takes --format json|markdown
 dart pub publish --dry-run   # must be 0 warnings before any release
+git tag vX.Y.Z && git push origin vX.Y.Z   # every pub.dev release; docs and the site tell users to pin this tag
 tool/build_web.sh     # rebuild site/app/engine.js after any change under lib/
 ```
 

@@ -198,8 +198,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Minas-27/upkeep@main
+      - uses: Minas-27/upkeep@v0.2.1
 ```
+
+Pin a release tag, as above, rather than `@main`. A tag is the exact code you
+reviewed; `main` changes as upkeep is developed, and `fix-pr` runs with write
+access to your repository. Each release on pub.dev has a matching tag.
 
 The scan fails the job on blocking findings, writes the report to the job
 summary, and leaves a JSON report at the `report` output. Flutter or plain Dart
@@ -216,7 +220,7 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
-      - uses: Minas-27/upkeep@main
+      - uses: Minas-27/upkeep@v0.2.1
         with:
           command: fix-pr
 ```

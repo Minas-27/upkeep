@@ -36,11 +36,30 @@ if [[ "$needs_flutter" == "true" ]]; then
 elif command -v dart > /dev/null; then
   echo "Using the Dart already on PATH: $(command -v dart)"
 else
-  echo "Installing Dart (stable, $os-$arch)"
-  zip="$tools/dartsdk.zip"
+  # Resolve "latest" to one version first, so the zip and its checksum are
+  # guaranteed to come from the same release.
+  archive="https://storage.googleapis.com/dart-archive/channels/stable/release"
+  version="$(curl -fsSL "$archive/latest/VERSION" | jq -r '.version')"
+  if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    echo "::error title=upkeep::Could not read the latest stable Dart version (got '$version')."
+    exit 2
+  fi
+  echo "Installing Dart $version (stable, $os-$arch)"
+  name="dartsdk-$os-$arch-release.zip"
+  zip="$tools/$name"
   mkdir -p "$tools"
-  curl -fsSL -o "$zip" \
-    "https://storage.googleapis.com/dart-archive/channels/stable/release/latest/sdk/dartsdk-$os-$arch-release.zip"
+  curl -fsSL -o "$zip" "$archive/$version/sdk/$name"
+  expected="$(curl -fsSL "$archive/$version/sdk/$name.sha256sum" | awk '{print $1}')"
+  if command -v sha256sum > /dev/null; then
+    actual="$(sha256sum "$zip" | awk '{print $1}')"
+  else
+    actual="$(shasum -a 256 "$zip" | awk '{print $1}')"
+  fi
+  if [[ -z "$expected" || "$actual" != "$expected" ]]; then
+    echo "::error title=upkeep::The Dart SDK download failed its SHA-256 check (expected '$expected', got '$actual'). Nothing was installed."
+    rm -f "$zip"
+    exit 2
+  fi
   unzip -q -o "$zip" -d "$tools"
   echo "$tools/dart-sdk/bin" >> "$GITHUB_PATH"
 fi

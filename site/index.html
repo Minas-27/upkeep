@@ -872,7 +872,7 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
     <span class="k">runs-on:</span> ubuntu-latest
     <span class="k">steps:</span>
       <span class="k">- uses:</span> actions/checkout@v4
-      <span class="k">- uses:</span> Minas-27/upkeep@main
+      <span class="k">- uses:</span> Minas-27/upkeep@v<span data-upkeep-version>0.2.1</span>
 
   <span class="k">fix:</span>
     <span class="k">if:</span> github.event_name == 'schedule'
@@ -882,7 +882,7 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
       <span class="k">pull-requests:</span> write
     <span class="k">steps:</span>
       <span class="k">- uses:</span> actions/checkout@v4
-      <span class="k">- uses:</span> Minas-27/upkeep@main
+      <span class="k">- uses:</span> Minas-27/upkeep@v<span data-upkeep-version>0.2.1</span>
         <span class="k">with:</span>
           <span class="k">command:</span> fix-pr</pre>
       </div>
