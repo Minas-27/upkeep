@@ -1,14 +1,21 @@
 # upkeep
 
-**44% of Flutter developer dissatisfaction comes from version-matrix guesswork. That number is Google's, not mine.**
+**Upgrade pain is the largest source of Flutter developer dissatisfaction. That finding is Google's, not mine.**
 
-The [Flutter Q2 2026 survey](https://flutter.dev/blog/what-do-flutter-package-users-need-findings-from-q2-user-survey)
-found that platform and ecosystem maturity drives 44% of developer
-dissatisfaction, and named the cause directly: hours lost "juggling Flutter,
-Dart, Gradle, Kotlin, and JVM versions together." Another 18% said the packages
-they needed did not exist. And when a package quietly dies, nothing tells you.
+In the [Flutter Q2 2026 survey](https://flutter.dev/blog/flutter-q2-2026-survey),
+platform and ecosystem maturity was the largest dissatisfaction theme, at 44%,
+"centered on upgrade pain rather than getting started." In Google's words:
+"Developers described losing hours to version-matrix guesswork when upgrading
+older projects, especially on Android when juggling Flutter, Dart, Gradle,
+Kotlin, and JVM versions together."
 
-`upkeep` tells you. One command, no configuration.
+`pub get` warns you when a publisher marks a package discontinued. Most
+abandoned packages are never marked. `hive` has not had a stable release since
+June 2022, and `pub get` installs it without a word. Flutter checks your Android
+build versions too, but only when you build, one error at a time.
+
+`upkeep` puts both in one report, before you build. One command, no
+configuration.
 
 ```console
 $ dart pub global activate upkeep
@@ -39,11 +46,11 @@ DEPENDENCIES   23 direct
 
   AT RISK        hive  2.2.3
       declares support only up to Dart >=2.12.0 <3.0.0; it resolves today through pub's Dart 3 allowance, not because it was updated
-      no release in 50 months
+      no stable release in 50 months
 
   AT RISK        hive_flutter  1.1.0
       declares support only up to Dart >=2.12.0 <3.0.0; it resolves today through pub's Dart 3 allowance, not because it was updated
-      no release in 62 months
+      no stable release in 62 months
 
   SDK BLOCKED    6 packages have a newer release your Dart is too old for
       flutter_riverpod, go_router, lottie, pdf, printing, shimmer

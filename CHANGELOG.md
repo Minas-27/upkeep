@@ -1,3 +1,17 @@
+## 0.2.1
+
+- README: corrected the survey claims. The link now points to the Flutter Q2
+  2026 survey (it pointed to a 2019 post), the 44% figure is described as
+  Google describes it, the largest dissatisfaction theme rather than a measure
+  of version-matrix guesswork alone, and the 18% figure, which came from 2019,
+  is removed.
+- README: no longer says nothing warns about dead packages. `pub get` does warn
+  about discontinued ones; upkeep's gap is the abandoned packages that were
+  never marked.
+- Verdict reasons now say "no stable release in N months". The count always
+  came from the latest stable version, and a package with a newer prerelease,
+  such as `hive`, made "no release" inaccurate.
+
 ## 0.2.0
 
 - `upkeep fix`: a plan of automatic changes and a to-do list, with the file and

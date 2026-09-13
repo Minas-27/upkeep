@@ -4198,7 +4198,7 @@ hj:function hj(){},
 hk:function hk(){},
 hl:function hl(){},
 rZ(){var s,r,q={}
-q.version="0.2.0"
+q.version="0.2.1"
 s=new A.kL()
 if(typeof s=="function")A.A(A.G("Attempting to rewrap a JS function.",null))
 r=function(a,b){return function(c){return a(b,c,arguments.length)}}(A.qm,s)
@@ -4249,8 +4249,8 @@ d=h.f
 a6=f.b
 a7=f.c
 a9=f.d
-a1=A.t5(f.e,a9!=null,d,a6,a0,e,a7,"0.2.0")
-a2=A.rB(a0,b,m.a,null,null,"0.2.0")
+a1=A.t5(f.e,a9!=null,d,a6,a0,e,a7,"0.2.1")
+a2=A.rB(a0,b,m.a,null,null,"0.2.1")
 a7=c.c
 e=B.o.c3(a1,null)
 a6=B.o.c3(a2,null)
@@ -4260,7 +4260,7 @@ b3=f.b
 b4=f.c
 b5=f.d
 b6=t.N
-b6=B.o.c4(A.aj(["ok",!0,"referencesRead",a7,"scan",e,"fix",a6,"markdown",A.aj(["scan",A.t6(f.e,b5!=null,a9,b3,d,b4,"0.2.0"),"fix",A.rC(b,m.a,"0.2.0")],b6,b6)],b6,t.z),null)
+b6=B.o.c4(A.aj(["ok",!0,"referencesRead",a7,"scan",e,"fix",a6,"markdown",A.aj(["scan",A.t6(f.e,b5!=null,a9,b3,d,b4,"0.2.1"),"fix",A.rC(b,m.a,"0.2.1")],b6,b6)],b6,t.z),null)
 q=b6
 s=1
 break
@@ -9203,47 +9203,47 @@ if(p.b!==B.A)continue
 o=p.a
 B.b.l(s,this.fT(p,b.k(0,o),c.$1(o)))}B.b.aN(s,new A.i5())
 return s},
-fT(a0,a1,a2){var s,r,q,p,o,n,m,l,k,j,i,h=this,g=null,f="its newest release (",e="has:error",d="is:dart3-compatible",c="not Dart 3 compatible",b=a1==null,a=b?g:a1.c
-if(a==null){A:{if(B.aw===(b?g:a1.b)){b="not published on pub.dev"
-break A}b="pub.dev could not be reached, so no verdict was reached either"
-break A}return new A.a5(a0.a,a0.c,B.cz,A.j([b],t.s),g,a0.d,a2,g,g,g,g)}if(a.z){b=A.j(["marked discontinued by its publisher on pub.dev"],t.s)
-s=a.Q
+fT(a1,a2,a3){var s,r,q,p,o,n,m,l,k,j,i,h=this,g=null,f="its newest release (",e="has:error",d="is:dart3-compatible",c="no stable release in ",b="not Dart 3 compatible",a=a2==null,a0=a?g:a2.c
+if(a0==null){A:{if(B.aw===(a?g:a2.b)){a="not published on pub.dev"
+break A}a="pub.dev could not be reached, so no verdict was reached either"
+break A}return new A.a5(a1.a,a1.c,B.cz,A.j([a],t.s),g,a1.d,a3,g,g,g,g)}if(a0.z){a=A.j(["marked discontinued by its publisher on pub.dev"],t.s)
+s=a0.Q
 r=s==null
-if(!r)b.push("the publisher nominates "+s+" as the replacement")
+if(!r)a.push("the publisher nominates "+s+" as the replacement")
 r=r?g:B.cd
-return new A.a5(a0.a,a0.c,B.q,b,a,a0.d,a2,s,r,g,g)}q=a.d
-if(q!=null&&!q.cH(h.b)){b=h.b
-if(A.oN(q,b))return new A.a5(a0.a,a0.c,B.a8,A.j([f+a.b.i(0)+") needs Dart "+q.i(0)],t.s),a,a0.d,a2,g,g,g,q.i(0))
-if(b.a>=3)p=a.as&&!B.b.E(a.x,e)&&B.b.E(a.x,d)||A.oO(q)
+return new A.a5(a1.a,a1.c,B.q,a,a0,a1.d,a3,s,r,g,g)}q=a0.d
+if(q!=null&&!q.cH(h.b)){a=h.b
+if(A.oN(q,a))return new A.a5(a1.a,a1.c,B.a8,A.j([f+a0.b.i(0)+") needs Dart "+q.i(0)],t.s),a0,a1.d,a3,g,g,g,q.i(0))
+if(a.a>=3)p=a0.as&&!B.b.E(a0.x,e)&&B.b.E(a0.x,d)||A.oO(q)
 else p=!1
-if(!p)return new A.a5(a0.a,a0.c,B.n,A.j([f+a.b.i(0)+") caps Dart at "+q.i(0)+", which excludes the Dart "+b.i(0)+" in use here","no release has ever supported this Dart, so waiting will not fix it"],t.s),a,a0.d,a2,g,g,g,g)
+if(!p)return new A.a5(a1.a,a1.c,B.n,A.j([f+a0.b.i(0)+") caps Dart at "+q.i(0)+", which excludes the Dart "+a.i(0)+" in use here","no release has ever supported this Dart, so waiting will not fix it"],t.s),a0,a1.d,a3,g,g,g,g)
 o="declares support only up to Dart "+q.i(0)+"; it resolves today through pub's Dart 3 allowance, not because it was updated"}else o=g
-b=a.as
-if(!(b&&!B.b.E(a.x,e))){n=a.geD()
-m=b?"pub.dev's analysis of this package failed, so its points and compatibility tags were not judged":"pub.dev score data was unavailable, so nothing further was judged"
-if(o!=null){b=A.j([o],t.s)
-if(n>=12)b.push("no release in "+n+" months")
-return h.aJ(a0,a,a2,B.r,b)}if(n>=12)return h.aJ(a0,a,a2,B.N,A.j(["no release in "+n+" months",m],t.s))
-return h.aJ(a0,a,a2,B.M,B.B)}b=A.j([],t.s)
+a=a0.as
+if(!(a&&!B.b.E(a0.x,e))){n=a0.geD()
+m=a?"pub.dev's analysis of this package failed, so its points and compatibility tags were not judged":"pub.dev score data was unavailable, so nothing further was judged"
+if(o!=null){a=A.j([o],t.s)
+if(n>=12)a.push(c+n+" months")
+return h.aJ(a1,a0,a3,B.r,a)}if(n>=12)return h.aJ(a1,a0,a3,B.N,A.j([c+n+" months",m],t.s))
+return h.aJ(a1,a0,a3,B.M,B.B)}a=A.j([],t.s)
 s=o!=null
-if(s)b.push(o)
-n=a.geD()
-r=a.f
-l=r<=0?g:a.e/r
-k=a.w
-j=k>=1e5&&l!=null&&l>=0.9&&B.b.E(a.x,d)
+if(s)a.push(o)
+n=a0.geD()
+r=a0.f
+l=r<=0?g:a0.e/r
+k=a0.w
+j=k>=1e5&&l!=null&&l>=0.9&&B.b.E(a0.x,d)
 i=!1
-if(n>=24)if(!B.b.E(a.x,d))i=(l==null||l<0.6)&&!j
-if(i){B.b.l(b,"no release in "+n+" months")
-B.b.l(b,c)
-B.b.l(b,"scores "+a.e+" of "+r+" pub points")
-return h.aJ(a0,a,a2,B.m,b)}if(s){if(n>=12)B.b.l(b,"no release in "+n+" months")
-return h.aJ(a0,a,a2,B.r,b)}if(!j){if(n>=18)B.b.l(b,"no release in "+n+" months")
-if(!B.b.E(a.x,d))B.b.l(b,c)
-if(l!=null&&l<0.5)B.b.l(b,"scores "+a.e+" of "+r+" pub points")
-if(b.length!==0)return h.aJ(a0,a,a2,B.r,b)}if(n>=12){B.b.l(b,"no release in "+n+" months, but otherwise healthy")
-if(j)B.b.l(b,"still widely used: "+A.rD(k)+" downloads in the last 30 days")
-return h.aJ(a0,a,a2,B.N,b)}return h.aJ(a0,a,a2,B.M,B.B)},
+if(n>=24)if(!B.b.E(a0.x,d))i=(l==null||l<0.6)&&!j
+if(i){B.b.l(a,c+n+" months")
+B.b.l(a,b)
+B.b.l(a,"scores "+a0.e+" of "+r+" pub points")
+return h.aJ(a1,a0,a3,B.m,a)}if(s){if(n>=12)B.b.l(a,c+n+" months")
+return h.aJ(a1,a0,a3,B.r,a)}if(!j){if(n>=18)B.b.l(a,c+n+" months")
+if(!B.b.E(a0.x,d))B.b.l(a,b)
+if(l!=null&&l<0.5)B.b.l(a,"scores "+a0.e+" of "+r+" pub points")
+if(a.length!==0)return h.aJ(a1,a0,a3,B.r,a)}if(n>=12){B.b.l(a,c+n+" months, but otherwise healthy")
+if(j)B.b.l(a,"still widely used: "+A.rD(k)+" downloads in the last 30 days")
+return h.aJ(a1,a0,a3,B.N,a)}return h.aJ(a1,a0,a3,B.M,B.B)},
 aJ(a,b,c,d,e){var s=null
 return new A.a5(a.a,a.c,d,t.q.a(e),b,a.d,c,s,s,s,s)}}
 A.i5.prototype={

@@ -375,7 +375,7 @@
 <header class="nav" id="nav">
   <div class="wrap">
     <a class="brand" href="#top" aria-label="upkeep home"><svg viewBox="0 0 249 64" aria-hidden="true"><use href="#logo"/></svg></a>
-    <span class="ver">v0.2.0</span>
+    <span class="ver">v0.2.1</span>
     <nav class="links" aria-label="Sections">
       <a href="#demo">Demo</a>
       <a href="#fix">Fix</a>
@@ -446,12 +446,12 @@
   <span class="vA">AT RISK</span>        <span class="b">hive</span>  <span class="d">2.2.3</span>
       <span class="d">declares support only up to Dart &gt;=2.12.0 &lt;3.0.0; it resolves today</span>
       <span class="d">through pub's Dart 3 allowance, not because it was updated</span>
-      <span class="d">no release in 50 months</span>
+      <span class="d">no stable release in 50 months</span>
 
   <span class="vA">AT RISK</span>        <span class="b">hive_flutter</span>  <span class="d">1.1.0</span>
       <span class="d">declares support only up to Dart &gt;=2.12.0 &lt;3.0.0; it resolves today</span>
       <span class="d">through pub's Dart 3 allowance, not because it was updated</span>
-      <span class="d">no release in 62 months</span>
+      <span class="d">no stable release in 62 months</span>
 
   <span class="vB">SDK BLOCKED</span>    <span class="b">6 packages have a newer release your Dart is too old for</span>
       <span class="d">flutter_riverpod, go_router, lottie, pdf, printing, shimmer</span>
@@ -552,19 +552,19 @@
   <div class="wrap">
     <div class="reveal">
       <p class="eyebrow">The problem, measured by Google</p>
-      <h2 class="h2 grad" id="problem" style="max-width:20ch">44% of Flutter developer frustration is version guesswork.</h2>
+      <h2 class="h2 grad" id="problem" style="max-width:20ch">Upgrade pain is Flutter's biggest complaint.</h2>
       <p class="lede">
-        Not a pitch. Google's own Q2 2026 Flutter survey found platform and ecosystem maturity drives 44% of developer
-        dissatisfaction, and named the cause outright: hours lost juggling Flutter, Dart, Gradle, Kotlin and JVM versions.
-        Meanwhile packages die quietly, and nothing tells you.
+        Not a pitch. In Google's own Q2 2026 Flutter survey, platform and ecosystem maturity was the largest dissatisfaction
+        theme, centered on upgrade pain: hours lost to version-matrix guesswork across Flutter, Dart, Gradle, Kotlin and JVM.
+        <code class="i">pub get</code> warns about packages marked discontinued. Most abandoned packages are never marked.
       </p>
     </div>
     <div class="numbers reveal">
-      <div class="num"><b class="grad-teal">44%</b><span>of developer dissatisfaction traced to ecosystem and version-matrix problems</span></div>
-      <div class="num"><b class="grad">18%</b><span>say the critical packages they need do not exist yet</span></div>
-      <div class="num"><b class="grad">872k</b><span>downloads last month of <code class="i">pedantic</code>, a package its own publisher discontinued years ago</span></div>
+      <div class="num"><b class="grad-teal">44%</b><span>platform and ecosystem maturity, the largest dissatisfaction theme in the survey</span></div>
+      <div class="num"><b class="grad">4 yrs</b><span>since <code class="i">hive</code>'s last stable release. It is not marked discontinued, so <code class="i">pub get</code> installs it silently</span></div>
+      <div class="num"><b class="grad">1.1M</b><span>downloads of <code class="i">hive</code> in the last 30 days</span></div>
     </div>
-    <p class="source">Sources: Flutter Q2 2026 user survey, flutter.dev &middot; pub.dev API for <code>pedantic</code>, 13 September 2026.</p>
+    <p class="source">Sources: <a href="https://flutter.dev/blog/flutter-q2-2026-survey">Flutter Q2 2026 survey</a>, flutter.dev &middot; pub.dev API for <code>hive</code>, and <code>dart pub get</code> on Dart 3.11, 13 September 2026.</p>
   </div>
 </section>
 
@@ -628,7 +628,7 @@
 
   [ ] <span class="b">Plan a move off hive</span><span class="d">   not blocking</span>
       <span class="s">declares support only up to Dart &gt;=2.12.0 &lt;3.0.0; it resolves today through pub's Dart 3 allowance, not because it was updated</span>
-      <span class="s">no release in 50 months</span>
+      <span class="s">no stable release in 50 months</span>
       <span class="s">used in 4 files:</span>
         lib/features/stock/models/stock_model.dart:7
         lib/features/shield/models/sms_receipt_model.dart:9
@@ -637,7 +637,7 @@
 
   [ ] <span class="b">Plan a move off hive_flutter</span><span class="d">   not blocking</span>
       <span class="s">declares support only up to Dart &gt;=2.12.0 &lt;3.0.0; it resolves today through pub's Dart 3 allowance, not because it was updated</span>
-      <span class="s">no release in 62 months</span>
+      <span class="s">no stable release in 62 months</span>
       <span class="s">used in 1 file:</span>
         lib/core/storage/local_db.dart:1
 
@@ -664,7 +664,7 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
 
   [ ] <span class="b">Plan a move off hive</span><span class="d">   not blocking</span>
       <span class="s">declares support only up to Dart &gt;=2.12.0 &lt;3.0.0; it resolves today through pub's Dart 3 allowance, not because it was updated</span>
-      <span class="s">no release in 50 months</span>
+      <span class="s">no stable release in 50 months</span>
       <span class="s">used in 4 files:</span>
         lib/features/stock/models/stock_model.dart:7
         lib/features/shield/models/sms_receipt_model.dart:9
@@ -673,7 +673,7 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
 
   [ ] <span class="b">Plan a move off hive_flutter</span><span class="d">   not blocking</span>
       <span class="s">declares support only up to Dart &gt;=2.12.0 &lt;3.0.0; it resolves today through pub's Dart 3 allowance, not because it was updated</span>
-      <span class="s">no release in 62 months</span>
+      <span class="s">no stable release in 62 months</span>
       <span class="s">used in 1 file:</span>
         lib/core/storage/local_db.dart:1
 

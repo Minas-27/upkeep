@@ -176,7 +176,7 @@ void main() {
           name: name,
           isDev: false,
           verdict: Verdict.dead,
-          reasons: const ['no release in 30 months'],
+          reasons: const ['no stable release in 30 months'],
         );
     const map = {
       'gone': CuratedReplacement(package: 'gone', replacement: 'heir', evidenceUrl: 'https://example.com/readme'),

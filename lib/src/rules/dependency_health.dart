@@ -282,12 +282,12 @@ class HealthEngine {
       if (legacyCeiling != null) {
         return _report(dep, info, resolved, Verdict.atRisk, [
           legacyCeiling,
-          if (months >= thresholds.staleMonths) 'no release in $months months',
+          if (months >= thresholds.staleMonths) 'no stable release in $months months',
         ]);
       }
       if (months >= thresholds.staleMonths) {
         return _report(dep, info, resolved, Verdict.stale, [
-          'no release in $months months',
+          'no stable release in $months months',
           unavailable,
         ]);
       }
@@ -311,26 +311,26 @@ class HealthEngine {
         (ratio == null || ratio < thresholds.deadPointsRatio) &&
         !loadBearing) {
       reasons
-        ..add('no release in $months months')
+        ..add('no stable release in $months months')
         ..add('not Dart 3 compatible')
         ..add(_pointsReason(info));
       return _report(dep, info, resolved, Verdict.dead, reasons);
     }
 
     if (legacyCeiling != null) {
-      if (months >= thresholds.staleMonths) reasons.add('no release in $months months');
+      if (months >= thresholds.staleMonths) reasons.add('no stable release in $months months');
       return _report(dep, info, resolved, Verdict.atRisk, reasons);
     }
 
     if (!loadBearing) {
-      if (months >= thresholds.atRiskMonths) reasons.add('no release in $months months');
+      if (months >= thresholds.atRiskMonths) reasons.add('no stable release in $months months');
       if (!info.isDart3Compatible) reasons.add('not Dart 3 compatible');
       if (ratio != null && ratio < thresholds.atRiskPointsRatio) reasons.add(_pointsReason(info));
       if (reasons.isNotEmpty) return _report(dep, info, resolved, Verdict.atRisk, reasons);
     }
 
     if (months >= thresholds.staleMonths) {
-      reasons.add('no release in $months months, but otherwise healthy');
+      reasons.add('no stable release in $months months, but otherwise healthy');
       if (loadBearing) {
         reasons.add('still widely used: ${formatCount(info.downloads30Days)} downloads in the '
             'last 30 days');
