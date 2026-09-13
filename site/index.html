@@ -561,10 +561,10 @@
     </div>
     <div class="numbers reveal">
       <div class="num"><b class="grad-teal">44%</b><span>platform and ecosystem maturity, the largest dissatisfaction theme in the survey</span></div>
-      <div class="num"><b class="grad">4 yrs</b><span>since <code class="i">hive</code>'s last stable release. It is not marked discontinued, so <code class="i">pub get</code> installs it silently</span></div>
-      <div class="num"><b class="grad">1.1M</b><span>downloads of <code class="i">hive</code> in the last 30 days</span></div>
+      <div class="num" data-hive-card><b class="grad" id="hive-age">4 yrs</b><span>since <code class="i">hive</code>'s last stable release. It is not marked discontinued, so <code class="i">pub get</code> installs it silently</span></div>
+      <div class="num" data-hive-card><b class="grad" id="hive-downloads">1.1M</b><span>downloads of <code class="i">hive</code> in the last 30 days</span></div>
     </div>
-    <p class="source">Sources: <a href="https://flutter.dev/blog/flutter-q2-2026-survey">Flutter Q2 2026 survey</a>, flutter.dev &middot; pub.dev API for <code>hive</code>, and <code>dart pub get</code> on Dart 3.11, 13 September 2026.</p>
+    <p class="source">Sources: <a href="https://flutter.dev/blog/flutter-q2-2026-survey">Flutter Q2 2026 survey</a>, flutter.dev &middot; <a href="https://pub.dev/packages/hive">pub.dev API for <code>hive</code></a>, <span id="hive-checked">13 September 2026</span> &middot; <code>dart pub get</code> on Dart 3.11, 13 September 2026.</p>
   </div>
 </section>
 
@@ -985,6 +985,62 @@ Run <span class="b">upkeep fix --apply</span> to make the 2 automatic changes.
 </footer>
 
 <div class="sr" aria-live="polite" id="announce"></div>
+
+<script>
+  // Live hive figures for the problem section. pub.dev's API allows browser
+  // requests, so each visitor fetches them, cached for 12 hours. The numbers in
+  // the HTML are the fallback, verified 13 September 2026. If hive ever ships a
+  // stable release or is marked discontinued, the claim is no longer true and
+  // both hive cards are removed rather than left saying something false.
+  (function () {
+    var KEY = 'upkeep:hive-stats:v1';
+    var TTL = 12 * 60 * 60 * 1000;
+    var cards = document.querySelectorAll('[data-hive-card]');
+    if (!cards.length || !window.fetch) return;
+
+    function render(d) {
+      var published = new Date(d.published);
+      var now = new Date();
+      var months = (now.getFullYear() - published.getFullYear()) * 12 + now.getMonth() - published.getMonth();
+      if (now.getDate() < published.getDate()) months--;
+      if (d.discontinued || months < 12 || typeof d.downloads !== 'number') {
+        cards.forEach(function (c) { c.style.display = 'none'; });
+        return;
+      }
+      var years = Math.floor(months / 12);
+      document.getElementById('hive-age').textContent = years + (years === 1 ? ' yr' : ' yrs');
+      var n = d.downloads;
+      document.getElementById('hive-downloads').textContent =
+        n >= 1e6 ? (n / 1e6).toFixed(1).replace(/\.0$/, '') + 'M' :
+        n >= 1e3 ? Math.round(n / 1e3) + 'k' : String(n);
+      document.getElementById('hive-checked').textContent = 'checked ' +
+        new Date(d.fetched).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    var cached = null;
+    try { cached = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+    if (cached && Date.now() - cached.fetched < TTL) { render(cached); return; }
+
+    Promise.all([
+      fetch('https://pub.dev/api/packages/hive').then(function (r) { if (!r.ok) throw r; return r.json(); }),
+      fetch('https://pub.dev/api/packages/hive/score').then(function (r) { if (!r.ok) throw r; return r.json(); })
+    ]).then(function (res) {
+      var latest = res[0] && res[0].latest;
+      if (!latest || !latest.published) throw new Error('no latest release');
+      var d = {
+        published: latest.published,
+        discontinued: res[0].isDiscontinued === true,
+        downloads: res[1].downloadCount30Days,
+        fetched: Date.now()
+      };
+      try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {}
+      render(d);
+    }).catch(function () {
+      // Keep the verified fallback figures, or the last good cached ones.
+      if (cached) render(cached);
+    });
+  })();
+</script>
 
 <script>
   (function () {
