@@ -7,3 +7,4 @@ action.yml
 action/
 web/
 tool/
+.gitattributes
