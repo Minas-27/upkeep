@@ -7,7 +7,7 @@ dependencies are dying, and whether the Android build matrix actually works.
 
 ```bash
 dart analyze          # must be clean
-dart test             # 51 tests
+dart test             # 53 tests
 dart run bin/upkeep.dart scan --no-color --path <dir>
 dart run bin/upkeep.dart fix --no-color --path <dir>   # add --apply to edit
 dart run bin/upkeep.dart explain <package> --no-color
@@ -111,7 +111,7 @@ All public, no auth.
 1. Bump `pubspec.yaml` **and** `upkeepVersion` in `lib/src/version.dart`.
    They must match.
 2. Add a CHANGELOG entry.
-3. `dart analyze && dart test && dart pub publish --dry-run` — clean, 51 passing,
+3. `dart analyze && dart test && dart pub publish --dry-run` — clean, 53 passing,
    0 warnings.
 4. Commit, then `dart pub publish`, then push.
 
