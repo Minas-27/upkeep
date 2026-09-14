@@ -189,6 +189,22 @@ void main() {
       expect(report.reasons.join(' '), contains('still widely used'));
     });
 
+    test('a widely used package that lost points to age is stale, not at risk', () {
+      // Modelled on `collection`: dart.dev, ~9.8M downloads a month, no release
+      // in 22 months, 140/160 for a missing example and newer lints. At a 0.9
+      // threshold it was AT RISK in 16 of 20 real apps.
+      final report = judge(pkg(monthsAgo: 22, downloads: 9800000, points: 140));
+
+      expect(report.verdict, Verdict.stale);
+      expect(report.reasons.join(' '), contains('still widely used'));
+    });
+
+    test('popularity does not rescue a badly scoring old package', () {
+      final report = judge(pkg(monthsAgo: 22, downloads: 240000, points: 120));
+
+      expect(report.verdict, Verdict.atRisk);
+    });
+
     test('old, low scoring and pre-Dart-3 is dead', () {
       final report = judge(pkg(
         monthsAgo: 30,

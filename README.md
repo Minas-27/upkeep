@@ -37,7 +37,7 @@ $ dart pub global run upkeep scan
 ```
 
 ```
-upkeep 0.2.1   my_app   Dart 3.11.0
+upkeep 0.2.2   my_app   Dart 3.11.0
 
 DEPENDENCIES   23 direct
 
@@ -81,7 +81,7 @@ where each affected package is used. It changes nothing until you add
 `--apply`.
 
 ```
-upkeep 0.2.1   my_app   fix plan
+upkeep 0.2.2   my_app   fix plan
 
 AUTOMATIC   2 changes upkeep can make, each one reversible
 
@@ -198,7 +198,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Minas-27/upkeep@v0.2.1
+      - uses: Minas-27/upkeep@v0.2.2
 ```
 
 Pin a release tag, as above, rather than `@main`. A tag is the exact code you
@@ -220,7 +220,7 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v4
-      - uses: Minas-27/upkeep@v0.2.1
+      - uses: Minas-27/upkeep@v0.2.2
         with:
           command: fix-pr
 ```
@@ -274,7 +274,7 @@ network work.
 
 ## Status
 
-Version 0.2.1. It diagnoses, and it fixes the narrow set of things that can be
+Version 0.2.2. It diagnoses, and it fixes the narrow set of things that can be
 fixed without judgement. Everything else it hands to you as a to-do, with the
 locations.
 

@@ -54,7 +54,7 @@ class HealthThresholds {
     this.deadPointsRatio = 0.6,
     this.atRiskPointsRatio = 0.5,
     this.widelyUsedDownloads = 100000,
-    this.fullyScoringRatio = 0.9,
+    this.fullyScoringRatio = 0.8,
   });
 
   final int staleMonths;
@@ -67,6 +67,11 @@ class HealthThresholds {
   final int widelyUsedDownloads;
 
   /// Score ratio at or above which a package is treated as well maintained.
+  ///
+  /// Not 0.9. Points drift down on finished packages without anything going
+  /// wrong: `collection`, the Dart team's own, scores 140 of 160 because it has
+  /// no example and trips lints added after its last release. At 0.9 it was
+  /// called AT RISK in 16 of 20 real apps.
   final double fullyScoringRatio;
 }
 

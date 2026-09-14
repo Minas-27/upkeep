@@ -170,17 +170,20 @@ class AndroidMatrixChecker {
     if (compileSdk == null || maxApi == null) return null;
 
     if (compileSdk > maxApi) {
-      // Inferred data softens the verdict rather than hardening it. A wrong
-      // FAIL costs more trust than a missed one.
+      // Never a FAIL. AGP reports this as COMPILE_SDK_VERSION_TOO_HIGH through
+      // IssueReporter.reportWarning and the build carries on (checked in the
+      // bytecode of AGP 8.6.0, 8.13.1 and 9.0.1). Calling it a build failure
+      // failed Spotube, Hiddify and Hacki, which all build.
       final inferred = required.maxApiInferred;
       return MatrixFinding(
-        level: inferred ? FindingLevel.warn : FindingLevel.fail,
+        level: FindingLevel.warn,
         check: MatrixCheck.compileSdk,
         title: 'compileSdk $compileSdk is above what AGP $agp supports',
         detail: inferred
             ? 'AGP $agp appears to top out at API $maxApi, though Google does not state it '
                 'outright on that release page. Verify before acting.'
-            : 'AGP $agp supports up to API $maxApi.',
+            : 'AGP $agp was tested up to API $maxApi. The build still runs, with a warning, '
+                'but API $compileSdk is untested with this AGP.',
         fix: 'Either lower compileSdk to $maxApi, or raise AGP to a version that supports '
             'API $compileSdk.',
         fixFile: 'android/app/build.gradle[.kts]',

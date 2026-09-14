@@ -61,7 +61,9 @@ void main() {
   });
 
   group('compileSdk', () {
-    test('fails when above a documented ceiling', () {
+    test('warns, never fails, when above a documented ceiling', () {
+      // AGP reports this through IssueReporter.reportWarning and builds anyway.
+      // Spotube (compileSdk 36 on AGP 8.7.0) was once called a build failure.
       final findings = checker.check(const AndroidConfig(
         agpVersion: '8.5.0',
         gradleVersion: '8.7',
@@ -70,7 +72,9 @@ void main() {
         compileSdk: 36,
       ));
 
-      expect(findingContaining(findings, 'compileSdk 36')?.level, FindingLevel.fail);
+      final finding = findingContaining(findings, 'compileSdk 36');
+      expect(finding?.level, FindingLevel.warn);
+      expect(finding?.detail, contains('still runs'));
     });
 
     test('only warns when the ceiling was inferred rather than stated', () {

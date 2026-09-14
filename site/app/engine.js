@@ -3858,7 +3858,7 @@ rr(a){var s,r,q,p,o,n,m
 t.U.a(a)
 s=a.c
 r=A.r6(s)
-q=s===B.q||s===B.n||s===B.m
+q=s===B.p||s===B.n||s===B.m
 p=a.e
 p=p==null?null:p.b.f
 o=a.gih()
@@ -4198,7 +4198,7 @@ hj:function hj(){},
 hk:function hk(){},
 hl:function hl(){},
 rZ(){var s,r,q={}
-q.version="0.2.1"
+q.version="0.2.2"
 s=new A.kL()
 if(typeof s=="function")A.A(A.G("Attempting to rewrap a JS function.",null))
 r=function(a,b){return function(c){return a(b,c,arguments.length)}}(A.qm,s)
@@ -4249,8 +4249,8 @@ d=h.f
 a6=f.b
 a7=f.c
 a9=f.d
-a1=A.t5(f.e,a9!=null,d,a6,a0,e,a7,"0.2.1")
-a2=A.rB(a0,b,m.a,null,null,"0.2.1")
+a1=A.t5(f.e,a9!=null,d,a6,a0,e,a7,"0.2.2")
+a2=A.rB(a0,b,m.a,null,null,"0.2.2")
 a7=c.c
 e=B.o.c3(a1,null)
 a6=B.o.c3(a2,null)
@@ -4260,7 +4260,7 @@ b3=f.b
 b4=f.c
 b5=f.d
 b6=t.N
-b6=B.o.c4(A.aj(["ok",!0,"referencesRead",a7,"scan",e,"fix",a6,"markdown",A.aj(["scan",A.t6(f.e,b5!=null,a9,b3,d,b4,"0.2.1"),"fix",A.rC(b,m.a,"0.2.1")],b6,b6)],b6,t.z),null)
+b6=B.o.c4(A.aj(["ok",!0,"referencesRead",a7,"scan",e,"fix",a6,"markdown",A.aj(["scan",A.t6(f.e,b5!=null,a9,b3,d,b4,"0.2.2"),"fix",A.rC(b,m.a,"0.2.2")],b6,b6)],b6,t.z),null)
 q=b6
 s=1
 break
@@ -8833,10 +8833,10 @@ s=A.j([],t.dl)
 r=A.j([],t.dM)
 for(q=a.length,p=0;p<a.length;a.length===q||(0,A.ar)(a),++p){o=a[p]
 n=o.a
-if(n!==B.p&&n!==B.W)continue
+if(n!==B.r&&n!==B.W)continue
 this.hk(o,b,s,r)}for(q=J.aK(c);q.q();){n=q.gt()
 m=n.c
-if(!(m===B.q||m===B.n||m===B.m)&&m!==B.r)continue
+if(!(m===B.p||m===B.n||m===B.m)&&m!==B.q)continue
 this.hl(n,d,s,r)}B.b.aN(r,new A.hW())
 return new A.hU(s,r)},
 hl(a,b,c,d){var s,r,q,p,o,n,m,l,k,j
@@ -8845,7 +8845,7 @@ t.dA.a(d)
 s=a.a
 r=b.es(s)
 q=a.c
-p=q!==B.q
+p=q!==B.p
 o=!p||q===B.n||q===B.m
 n=!1
 if(o)if(!p||q===B.n||q===B.m)if(!a.b){p=a.e
@@ -8860,7 +8860,7 @@ return}m=a.w
 if(m!=null){l="Replace "+s+" with "+m
 k=a.x===B.a1?" (successor named at "+A.l(a.y)+")":""
 q=a.b?"dev:":""
-j="dart pub remove "+s+" && dart pub add "+q+m+", then update the imports below"+k}else if(q===B.r){l="Plan a move off "+s
+j="dart pub remove "+s+" && dart pub add "+q+m+", then update the imports below"+k}else if(q===B.q){l="Plan a move off "+s
 j=null}else{l="Replace "+s
 j="no maintained replacement is known yet; choose one on pub.dev"}B.b.l(d,new A.aF(l,a.d,o,j,r))},
 hk(a,b,c,d){var s,r,q,p,o,n=null
@@ -8869,7 +8869,7 @@ t.dA.a(d)
 s=a.d
 r=b==null
 q=r?n:b.a
-if(a.b===B.J&&a.a===B.p&&s!=null&&q!=null){p=r?n:b.x
+if(a.b===B.J&&a.a===B.r&&s!=null&&q!=null){p=r?n:b.x
 if(p===!0){r=A.j([],t.s)
 r.push(a.e)
 r.push("the wrapper pins a checksum, so upkeep leaves the change to Gradle itself")
@@ -8880,7 +8880,7 @@ r.push(a.e)
 p=a.f
 if(p==null)p=n
 else{o=a.r
-p+=o==null?"":" ("+o+")"}B.b.l(d,new A.aF(a.c,r,a.a===B.p,p,B.Z))}}
+p+=o==null?"":" ("+o+")"}B.b.l(d,new A.aF(a.c,r,a.a===B.r,p,B.Z))}}
 A.hW.prototype={
 $2(a,b){var s=t.jZ,r=s.a(a).c
 if(r===s.a(b).c)s=0
@@ -9102,23 +9102,23 @@ ag(){return"_Outcome."+this.b}}
 A.co.prototype={}
 A.kR.prototype={
 $1(a){var s=t.U.a(a).c
-return s===B.q||s===B.n||s===B.m},
+return s===B.p||s===B.n||s===B.m},
 $S:2}
 A.kS.prototype={
-$1(a){return t.U.a(a).c===B.r},
+$1(a){return t.U.a(a).c===B.q},
 $S:2}
 A.kT.prototype={
-$1(a){return t.D.a(a).a===B.p},
+$1(a){return t.D.a(a).a===B.r},
 $S:13}
 A.kU.prototype={
 $1(a){var s=t.U.a(a).c
-return s===B.q||s===B.n||s===B.m},
+return s===B.p||s===B.n||s===B.m},
 $S:2}
 A.kV.prototype={
-$1(a){return t.U.a(a).c===B.r},
+$1(a){return t.U.a(a).c===B.q},
 $S:2}
 A.kW.prototype={
-$1(a){return t.D.a(a).a===B.p},
+$1(a){return t.D.a(a).a===B.r},
 $S:13}
 A.kX.prototype={
 $1(a){var s=t.U.a(a).c
@@ -9154,21 +9154,19 @@ return q},
 fK(a,b,c){var s,r=a.a
 if(r==null)return B.c6
 s=b.b
-if(A.rh(r,s)<0)return new A.a4(B.p,B.J,"Gradle "+r+" is too old for AGP "+c,s,"AGP "+c+" requires Gradle "+s+" or newer. This combination does not build.","./gradlew wrapper --gradle-version="+s,"run inside android/")
+if(A.rh(r,s)<0)return new A.a4(B.r,B.J,"Gradle "+r+" is too old for AGP "+c,s,"AGP "+c+" requires Gradle "+s+" or newer. This combination does not build.","./gradlew wrapper --gradle-version="+s,"run inside android/")
 return new A.a4(B.X,B.J,"Gradle "+r+" satisfies AGP "+c,null,"Requires "+s+" or newer.",null,null)},
 fS(a,b,c){return new A.a4(B.Y,B.c3,"JDK version not detected",null,a.w,null,null)},
-fm(a,b,c){var s,r,q,p,o,n,m,l=null
+fm(a,b,c){var s,r,q,p,o,n=null
 if(a.e)return B.c5
 s=a.d
 r=b.e
-if(s==null||r==null)return l
-if(s>r){q=b.f
-p=q?B.W:B.p
-o=A.l(s)
-n="AGP "+c
-m=A.l(r)
-n=q?n+" appears to top out at API "+m+", though Google does not state it outright on that release page. Verify before acting.":n+" supports up to API "+m+"."
-return new A.a4(p,B.a_,"compileSdk "+o+" is above what AGP "+c+" supports",l,n,"Either lower compileSdk to "+m+", or raise AGP to a version that supports API "+o+".","android/app/build.gradle[.kts]")}return new A.a4(B.X,B.a_,"compileSdk "+A.l(s)+" is within AGP "+c+" limits",l,"Supports up to API "+A.l(r)+".",l,l)}}
+if(s==null||r==null)return n
+if(s>r){q=A.l(s)
+p="AGP "+c
+o=A.l(r)
+p=b.f?p+" appears to top out at API "+o+", though Google does not state it outright on that release page. Verify before acting.":p+" was tested up to API "+o+". The build still runs, with a warning, but API "+q+" is untested with this AGP."
+return new A.a4(B.W,B.a_,"compileSdk "+q+" is above what AGP "+c+" supports",n,p,"Either lower compileSdk to "+o+", or raise AGP to a version that supports API "+q+".","android/app/build.gradle[.kts]")}return new A.a4(B.X,B.a_,"compileSdk "+A.l(s)+" is within AGP "+c+" limits",n,"Supports up to API "+A.l(r)+".",n,n)}}
 A.hx.prototype={
 $2(a,b){var s=t.D
 return B.c.D(s.a(a).a.a,s.a(b).a.a)},
@@ -9211,7 +9209,7 @@ s=a0.Q
 r=s==null
 if(!r)a.push("the publisher nominates "+s+" as the replacement")
 r=r?g:B.cd
-return new A.a5(a1.a,a1.c,B.q,a,a0,a1.d,a3,s,r,g,g)}q=a0.d
+return new A.a5(a1.a,a1.c,B.p,a,a0,a1.d,a3,s,r,g,g)}q=a0.d
 if(q!=null&&!q.cH(h.b)){a=h.b
 if(A.oN(q,a))return new A.a5(a1.a,a1.c,B.a8,A.j([f+a0.b.i(0)+") needs Dart "+q.i(0)],t.s),a0,a1.d,a3,g,g,g,q.i(0))
 if(a.a>=3)p=a0.as&&!B.b.E(a0.x,e)&&B.b.E(a0.x,d)||A.oO(q)
@@ -9223,7 +9221,7 @@ if(!(a&&!B.b.E(a0.x,e))){n=a0.geD()
 m=a?"pub.dev's analysis of this package failed, so its points and compatibility tags were not judged":"pub.dev score data was unavailable, so nothing further was judged"
 if(o!=null){a=A.j([o],t.s)
 if(n>=12)a.push(c+n+" months")
-return h.aJ(a1,a0,a3,B.r,a)}if(n>=12)return h.aJ(a1,a0,a3,B.N,A.j([c+n+" months",m],t.s))
+return h.aJ(a1,a0,a3,B.q,a)}if(n>=12)return h.aJ(a1,a0,a3,B.N,A.j([c+n+" months",m],t.s))
 return h.aJ(a1,a0,a3,B.M,B.B)}a=A.j([],t.s)
 s=o!=null
 if(s)a.push(o)
@@ -9231,17 +9229,17 @@ n=a0.geD()
 r=a0.f
 l=r<=0?g:a0.e/r
 k=a0.w
-j=k>=1e5&&l!=null&&l>=0.9&&B.b.E(a0.x,d)
+j=k>=1e5&&l!=null&&l>=0.8&&B.b.E(a0.x,d)
 i=!1
 if(n>=24)if(!B.b.E(a0.x,d))i=(l==null||l<0.6)&&!j
 if(i){B.b.l(a,c+n+" months")
 B.b.l(a,b)
 B.b.l(a,"scores "+a0.e+" of "+r+" pub points")
 return h.aJ(a1,a0,a3,B.m,a)}if(s){if(n>=12)B.b.l(a,c+n+" months")
-return h.aJ(a1,a0,a3,B.r,a)}if(!j){if(n>=18)B.b.l(a,c+n+" months")
+return h.aJ(a1,a0,a3,B.q,a)}if(!j){if(n>=18)B.b.l(a,c+n+" months")
 if(!B.b.E(a0.x,d))B.b.l(a,b)
 if(l!=null&&l<0.5)B.b.l(a,"scores "+a0.e+" of "+r+" pub points")
-if(a.length!==0)return h.aJ(a1,a0,a3,B.r,a)}if(n>=12){B.b.l(a,c+n+" months, but otherwise healthy")
+if(a.length!==0)return h.aJ(a1,a0,a3,B.q,a)}if(n>=12){B.b.l(a,c+n+" months, but otherwise healthy")
 if(j)B.b.l(a,"still widely used: "+A.rD(k)+" downloads in the last 30 days")
 return h.aJ(a1,a0,a3,B.N,a)}return h.aJ(a1,a0,a3,B.M,B.B)},
 aJ(a,b,c,d,e){var s=null
@@ -10513,10 +10511,10 @@ $1(a){return t.U.a(a).a},
 $S:27}
 A.ke.prototype={
 $1(a){var s=t.U.a(a).c
-return s===B.q||s===B.n||s===B.m},
+return s===B.p||s===B.n||s===B.m},
 $S:2}
 A.kf.prototype={
-$1(a){return t.D.a(a).a===B.p},
+$1(a){return t.D.a(a).a===B.r},
 $S:13};(function aliases(){var s=J.bP.prototype
 s.f2=s.i
 s=A.aG.prototype
@@ -10855,7 +10853,7 @@ B.as=new A.aR(6,"sequenceStart")
 B.G=new A.aR(7,"sequenceEnd")
 B.at=new A.aR(8,"mappingStart")
 B.H=new A.aR(9,"mappingEnd")
-B.p=new A.cG(0,"fail")
+B.r=new A.cG(0,"fail")
 B.W=new A.cG(1,"warn")
 B.X=new A.cG(2,"pass")
 B.Y=new A.cG(3,"unchecked")
@@ -10940,11 +10938,11 @@ B.e=new A.cd("PLAIN")
 B.aA=new A.cd("SINGLE_QUOTED")
 B.c7={name:0,description:1,version:2,homepage:3,repository:4,issue_tracker:5,documentation:6,publish_to:7,environment:8,dependencies:9,dev_dependencies:10,dependency_overrides:11,flutter:12,executables:13,platforms:14,funding:15,topics:16,screenshots:17,false_secrets:18,ignored_advisories:19,workspace:20,resolution:21}
 B.cg=new A.cB(B.c7,22,t.lq)
-B.q=new A.b9("DISCONTINUED",0,"discontinued")
+B.p=new A.b9("DISCONTINUED",0,"discontinued")
 B.n=new A.b9("INCOMPATIBLE",1,"incompatible")
 B.m=new A.b9("DEAD",2,"dead")
-B.r=new A.b9("AT RISK",3,"atRisk")
-B.aB=new A.du([B.q,B.n,B.m,B.r],A.ai("du<b9>"))
+B.q=new A.b9("AT RISK",3,"atRisk")
+B.aB=new A.du([B.p,B.n,B.m,B.q],A.ai("du<b9>"))
 B.ci=new A.R(0,"streamStart")
 B.E=new A.R(1,"streamEnd")
 B.w=new A.R(10,"flowSequenceEnd")

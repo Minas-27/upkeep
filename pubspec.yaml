@@ -1,6 +1,6 @@
 name: upkeep
 description: Tells you the truth about your Flutter project's health - dying dependencies and invalid Android build matrices, each with the exact fix.
-version: 0.2.1
+version: 0.2.2
 repository: https://github.com/Minas-27/upkeep
 issue_tracker: https://github.com/Minas-27/upkeep/issues
 

@@ -1,3 +1,19 @@
+## 0.2.2
+
+Two wrong verdicts, found by scanning 20 open-source Flutter apps.
+
+- A widely used package that has lost some pub points to age is now STALE, not
+  AT RISK. The rescue for load-bearing packages required 144 of 160 points;
+  it now requires 128. `collection`, the Dart team's own package with about
+  9.8M downloads a month, scores 140 because it has no example and trips lints
+  added after its last release, and was called AT RISK in 16 of the 20 apps.
+  `stream_channel`, `rxdart`, `scrollable_positioned_list` and `sliver_tools`
+  were affected the same way.
+- `compileSdk` above what the Android Gradle Plugin was tested with is now a
+  warning, not a build failure, and no longer sets exit code 1. AGP reports it
+  with `reportWarning` and the build continues. Spotube, Hiddify and Hacki were
+  wrongly reported as not building.
+
 ## 0.2.1
 
 - README: corrected the survey claims. The link now points to the Flutter Q2
