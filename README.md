@@ -122,13 +122,14 @@ the resolver rejects the result every file is put back exactly as it was.
 ## What it checks
 
 **Your dependencies.** Every direct dependency is scored against pub.dev's own
-data: release recency, pub points, download volume, Dart 3 and WASM readiness,
-SDK constraints, and the official discontinued flag. When a publisher has
-nominated a replacement package, `upkeep` names it.
+data: release recency, pub points, download volume, Dart 3 compatibility, SDK
+constraints, and the official discontinued flag. When a publisher has nominated
+a replacement package, `upkeep` names it.
 
-**Your Android build matrix.** Gradle, AGP, Kotlin, JDK and `compileSdk` are
-validated against Google's published requirements for AGP 8.0 through 9.4. When
-something will not build, you get the exact command to fix it.
+**Your Android build matrix.** The Gradle version, JDK and `compileSdk` are
+checked against Google's published requirements for your AGP version, for AGP
+8.0 through 9.4. When something will not build, you get the exact command to
+fix it. Kotlin versions are not checked yet.
 
 ## The rules it holds itself to
 
@@ -271,6 +272,64 @@ Markdown for job summaries and pull request descriptions.
 
 Responses are cached for 24 hours under `~/.upkeep/cache`, so repeat scans do no
 network work.
+
+## Known limits
+
+`upkeep` gives opinions about other people's work, so here is where those
+opinions can be wrong.
+
+**The verdicts are rules of thumb, not facts.** They come from pub.dev data and
+fixed thresholds: no stable release in 12 months is STALE, 18 months is AT
+RISK, and DEAD needs 24 months plus no Dart 3 support and low pub points. A package with
+more than 100,000 downloads a month, 80% of its pub points and Dart 3 support
+is treated as finished rather than abandoned. Every verdict prints its reasons,
+so read those rather than the label alone.
+
+**It can miss abandoned packages.** It does not look at the source repository,
+so it cannot tell that a repository has been archived. `encrypt`, for example,
+is archived on GitHub but widely used, so `upkeep` calls it STALE rather than AT
+RISK.
+
+**It can flag packages that are still maintained.** A package whose newest
+release still declares `sdk: <3.0.0` is AT RISK, because it only installs
+through pub's Dart 3 allowance. That is true of some actively maintained
+packages too, such as `flutter_hooks`.
+
+**It has been wrong before, and the fixes are listed.** 0.1.2 called a healthy
+package DEAD and another INCOMPATIBLE. 0.2.1 called the Dart team's `collection`
+AT RISK and reported a too-new `compileSdk` as a build failure. Each was found
+by scanning real projects and is described in the [CHANGELOG](CHANGELOG.md). If
+you find another, please
+[open an issue](https://github.com/Minas-27/upkeep/issues): a wrong verdict is
+the bug that matters most here.
+
+**What it does not check:**
+
+- Only direct dependencies. Transitive dependencies are not judged.
+- Hosted packages only. Git, path and SDK dependencies are skipped and counted.
+- Kotlin versions, and anything outside Gradle, AGP, JDK and `compileSdk`.
+- AGP versions newer than 9.4. The requirements are copied by hand from
+  Google's release notes, last on 12 September 2026. For a newer AGP, `upkeep`
+  skips the Android checks and says so.
+- Security vulnerabilities. It is not an audit tool.
+
+**Where its inputs can be off:**
+
+- The JDK it reports is the one on your `PATH`, which may not be the one Gradle
+  uses. The report says so.
+- Verdicts judge a package's newest release, not the version you have
+  installed. Your installed version is only used to say whether you are behind.
+- In a pub workspace the lockfile lives at the workspace root. Run `upkeep` on
+  a member package and the verdicts are unchanged, but it cannot show which
+  versions you have installed.
+- pub.dev responses are cached for 24 hours, so a release made today may not
+  show until tomorrow. `--no-cache` refetches. If pub.dev cannot be reached,
+  the verdict is UNKNOWN.
+
+**`fix --apply` edits your files.** It only makes changes it can justify, runs
+`pub get` to check them, and restores every file if that fails. It refuses to
+run on uncommitted files unless you pass `--allow-dirty`. Still, review the
+diff before you commit it.
 
 ## Status
 
