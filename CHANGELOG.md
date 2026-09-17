@@ -1,3 +1,21 @@
+## 0.2.3
+
+A successor that nobody had checked.
+
+- A successor named by a publisher is now vetted before it is offered. pub.dev's
+  `replacedBy` is set by the publisher and reviewed by nobody, and it can point
+  at a package in worse shape than the one being replaced:
+  `super_editor_markdown` nominates `super_editor`, which has had no stable
+  release since June 2024 — seventeen months longer than the package it
+  replaces. The nomination is still shown, because the publisher did make it and
+  hiding it would be withholding a fact, but upkeep now runs the successor
+  through the same engine and prints what it found. Curated successors were
+  already held to this bar; publisher-named ones bypassed it entirely.
+- `--format json`: the `replacement` object gains a `warnings` array. Additive,
+  so `schemaVersion` stays 1.
+- Found by verifying the seven discontinued findings from the 20-app scan one by
+  one. All seven were correct; the successor attached to one of them was not.
+
 ## 0.2.2
 
 Two wrong verdicts, found by scanning 20 open-source Flutter apps.

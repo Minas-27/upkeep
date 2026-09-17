@@ -7,7 +7,7 @@ dependencies are dying, and whether the Android build matrix actually works.
 
 ```bash
 dart analyze          # must be clean
-dart test             # 53 tests
+dart test             # 59 tests
 dart run bin/upkeep.dart scan --no-color --path <dir>
 dart run bin/upkeep.dart fix --no-color --path <dir>   # add --apply to edit
 dart run bin/upkeep.dart explain <package> --no-color
@@ -76,9 +76,16 @@ people's dependencies has exactly one asset: trust.
 9. **A failed pub.dev analysis is missing data.** `has:error` leaves low points
    and no compatibility tags; `PackageInfo.hasAnalysis` gates every rule that
    reads them. `phosphor_flutter` allows Dart 3 and was once called DEAD on this.
-10. **A curated successor needs a citation and a healthy successor.** No entry in
-    `data/replacements.dart` without a primary source. `CuratedReplacements`
-    withholds a successor that is itself unhealthy or could not be looked up.
+10. **A successor is checked before it is offered, and never offered bare.** No
+    entry in `data/replacements.dart` without a primary source;
+    `CuratedReplacements` withholds a curated successor that is itself unhealthy
+    or could not be looked up. A publisher's `replacedBy` is a fact rather than
+    advice, so it is never withheld — but it goes through the same engine and is
+    shown with whatever that found. `super_editor_markdown` nominates
+    `super_editor`, which has not shipped a stable release since June 2024.
+    The two bars differ on purpose: a curated entry was reviewed by a person
+    against a cited source, so STALE still vouches for it; an unreviewed
+    nomination gets annotated instead.
 
 ## Exit codes
 

@@ -100,7 +100,7 @@ void main() {
       final old = (doc['dependencies'] as List).firstWhere((d) => d['name'] == 'old_thing');
       expect(old['verdict'], 'discontinued');
       expect(old['reasons'], isNotEmpty);
-      expect(old['replacement'], {'package': 'new_thing', 'source': 'publisher', 'evidence': null});
+      expect(old['replacement'], {'package': 'new_thing', 'source': 'publisher', 'evidence': null, 'warnings': <String>[]});
     });
 
     test('a missing pubspec is still valid JSON, with exit code 2', () async {
@@ -218,6 +218,67 @@ void main() {
       }
       final names = curatedReplacements.map((e) => e.package).toList();
       expect(names.toSet().length, names.length, reason: 'duplicate entries');
+    });
+
+    test('vouches for a successor that is merely stale', () async {
+      final pub = fakePub({'heir': published(name: 'heir', monthsAgo: 14)});
+      final lookups = await pub.fetchAll(['heir']);
+      final report = curated.attach([dead('gone')], lookups, engine).single;
+
+      expect(report.replacedBy, 'heir', reason: 'stable is not abandoned');
+      expect(report.replacementWarnings, isEmpty);
+    });
+  });
+
+  group("a publisher's successor", () {
+    DependencyReport gone(String successor) => DependencyReport(
+          name: 'old_thing',
+          isDev: false,
+          verdict: Verdict.discontinued,
+          reasons: const ['marked discontinued by its publisher on pub.dev'],
+          replacedBy: successor,
+          replacementSource: ReplacementSource.publisher,
+        );
+    final noCurated = CuratedReplacements(lookup: (_) => null);
+    final engine = HealthEngine(dartSdkVersion: Version(3, 11, 0));
+
+    test('is looked up so it can be vetted', () {
+      expect(noCurated.candidates([gone('heir')]), ['heir']);
+    });
+
+    test('is never withheld, but says what is wrong with it', () async {
+      final pub = fakePub({'heir': published(name: 'heir', discontinued: true)});
+      final lookups = await pub.fetchAll(['heir']);
+      final report = noCurated.attach([gone('heir')], lookups, engine).single;
+
+      expect(report.replacedBy, 'heir', reason: 'the publisher said it; it is a fact, not advice');
+      expect(report.replacementSource, ReplacementSource.publisher);
+      expect(report.replacementWarnings, contains('marked discontinued by its publisher on pub.dev'));
+    });
+
+    test('is annotated when it is quieter than the package it replaces', () async {
+      final pub = fakePub({'heir': published(name: 'heir', monthsAgo: 27)});
+      final lookups = await pub.fetchAll(['heir']);
+      final report = noCurated.attach([gone('heir')], lookups, engine).single;
+
+      expect(report.replacedBy, 'heir');
+      expect(report.replacementWarnings, contains('no stable release in 27 months'));
+    });
+
+    test('carries no warnings when it checks out', () async {
+      final pub = fakePub({'heir': published(name: 'heir')});
+      final lookups = await pub.fetchAll(['heir']);
+      final report = noCurated.attach([gone('heir')], lookups, engine).single;
+
+      expect(report.replacedBy, 'heir');
+      expect(report.replacementWarnings, isEmpty);
+    });
+
+    test('carries no warnings when pub.dev could not be reached for it', () {
+      final report = noCurated.attach([gone('heir')], const {}, engine).single;
+
+      expect(report.replacedBy, 'heir');
+      expect(report.replacementWarnings, isEmpty, reason: 'missing data is never evidence');
     });
   });
 }

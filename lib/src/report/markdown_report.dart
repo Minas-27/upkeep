@@ -14,11 +14,14 @@ String _escape(String s) => s.replaceAll('|', r'\|').replaceAll('<', '&lt;').rep
 String _replacementLine(DependencyReport r) {
   final successor = r.replacedBy;
   if (successor == null) return '';
-  return switch (r.replacementSource) {
+  final line = switch (r.replacementSource) {
     ReplacementSource.curated =>
       '<br>Move to ${_code(successor)} ([evidence](${r.replacementEvidence ?? ''}))',
     _ => '<br>Move to ${_code(successor)}, named by its publisher',
   };
+  if (r.replacementWarnings.isEmpty) return line;
+  return '$line<br>About ${_code(successor)} itself: '
+      '${_escape(r.replacementWarnings.join('; '))}';
 }
 
 String scanMarkdown({

@@ -52,6 +52,7 @@ Map<String, Object?> dependencyJson(DependencyReport r) => {
               'package': r.replacedBy,
               'source': r.replacementSource?.name,
               'evidence': r.replacementEvidence,
+              'warnings': r.replacementWarnings,
             },
     };
 

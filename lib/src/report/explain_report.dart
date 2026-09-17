@@ -63,6 +63,12 @@ class ExplainReport {
             ? '   successor named at ${report.replacementEvidence}'
             : '   named by its publisher',
       )}');
+      if (report.replacementWarnings.isNotEmpty) {
+        _out.writeln('        ${_s.dim('about $successor itself:')}');
+        for (final warning in report.replacementWarnings) {
+          _out.writeln('          ${_s.dim(warning)}');
+        }
+      }
     }
 
     _out

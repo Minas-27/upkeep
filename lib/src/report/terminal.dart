@@ -81,6 +81,12 @@ class TerminalReport {
             ? _s.dim('   successor named at ${report.replacementEvidence}')
             : '';
         _out.writeln('      ${_s.cyan('move to $replacement')}$source');
+        if (report.replacementWarnings.isNotEmpty) {
+          _out.writeln('        ${_s.dim('about $replacement itself:')}');
+          for (final warning in report.replacementWarnings) {
+            _out.writeln('          ${_s.dim(warning)}');
+          }
+        }
       }
     }
 

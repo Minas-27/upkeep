@@ -98,6 +98,7 @@ class DependencyReport {
     this.replacementSource,
     this.replacementEvidence,
     this.requiresDart,
+    this.replacementWarnings = const [],
   });
 
   final String name;
@@ -120,6 +121,19 @@ class DependencyReport {
   /// Where a curated replacement is documented.
   final String? replacementEvidence;
 
+  /// What is wrong with [replacedBy] itself, when the successor was looked up
+  /// and judged unhealthy by the same engine.
+  ///
+  /// Only ever set for a successor the publisher named. A curated successor is
+  /// withheld outright when it does not check out, but a publisher's
+  /// nomination is a fact about the package and hiding it would be withholding
+  /// evidence. So upkeep states it and says what it knows about where it is
+  /// sending you.
+  ///
+  /// Empty when the successor checks out, and equally when pub.dev could not
+  /// be reached for it: missing data is never evidence.
+  final List<String> replacementWarnings;
+
   /// The Dart constraint the newest release asks for, when that is what blocks
   /// the upgrade. Used to group SDK-blocked packages into one message.
   final String? requiresDart;
@@ -137,6 +151,22 @@ class DependencyReport {
         replacementSource: ReplacementSource.curated,
         replacementEvidence: evidence,
         requiresDart: requiresDart,
+      );
+
+  /// This report with what is wrong with the successor its publisher named.
+  DependencyReport withReplacementWarnings(List<String> warnings) => DependencyReport(
+        name: name,
+        isDev: isDev,
+        verdict: verdict,
+        reasons: reasons,
+        info: info,
+        declaredConstraint: declaredConstraint,
+        resolvedVersion: resolvedVersion,
+        replacedBy: replacedBy,
+        replacementSource: replacementSource,
+        replacementEvidence: replacementEvidence,
+        requiresDart: requiresDart,
+        replacementWarnings: warnings,
       );
 
   /// True when the resolved version is behind the latest published one.
